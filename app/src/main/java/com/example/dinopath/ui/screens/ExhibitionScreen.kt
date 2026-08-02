@@ -29,6 +29,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.outlined.Pets
+
 
 @Composable
 fun ExhibitionScreen(
@@ -65,6 +73,9 @@ fun ExhibitionScreen(
             GalleryLearningCard(
                 gallery = selectedGallery,
             )
+        }
+        item {
+            DinosaurHighlightsSection()
         }
     }
 }
@@ -175,6 +186,7 @@ private fun GallerySelector(
 private fun GalleryLearningCard(
     gallery: ExhibitionGallery,
     modifier: Modifier = Modifier,
+
 ) {
     val content = gallery.content()
 
@@ -226,6 +238,93 @@ private fun GalleryLearningCard(
             Text(
                 text = content.reflectionQuestion,
                 style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+        }
+    }
+}
+
+@Composable
+private fun DinosaurHighlightsSection(
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text(
+            text = "DINOSAUR HIGHLIGHTS",
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
+        )
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            items(
+                count = dinosaurHighlights.size,
+                key = { index ->
+                    dinosaurHighlights[index].name
+                },
+            ) { index ->
+                DinosaurHighlightCard(
+                    dinosaur = dinosaurHighlights[index],
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DinosaurHighlightCard(
+    dinosaur: DinosaurHighlight,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        modifier = modifier.width(240.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        shape = RoundedCornerShape(14.dp),
+                    ),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Pets,
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp),
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
+
+            Text(
+                text = dinosaur.name,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+
+            Text(
+                text = dinosaur.diet,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
+
+            Text(
+                text = dinosaur.description,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -283,3 +382,27 @@ private fun ExhibitionGallery.content(): GalleryContent {
         )
     }
 }
+
+private data class DinosaurHighlight(
+    val name: String,
+    val diet: String,
+    val description: String,
+)
+
+private val dinosaurHighlights = listOf(
+    DinosaurHighlight(
+        name = "Stegosaurus",
+        diet = "Herbivore",
+        description = "Known for its back plates and four-spiked tail.",
+    ),
+    DinosaurHighlight(
+        name = "Brachiosaurus",
+        diet = "Herbivore",
+        description = "A tall sauropod with longer front legs.",
+    ),
+    DinosaurHighlight(
+        name = "Allosaurus",
+        diet = "Carnivore",
+        description = "A large predator of the Late Jurassic.",
+    ),
+)
