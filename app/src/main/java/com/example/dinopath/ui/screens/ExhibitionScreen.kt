@@ -19,11 +19,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.FilterChip
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 
 @Composable
 fun ExhibitionScreen(
     modifier: Modifier = Modifier,
 ) {
+    var selectedGallery by rememberSaveable {
+        mutableStateOf(ExhibitionGallery.CLIMATE)
+    }
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(
@@ -37,6 +48,14 @@ fun ExhibitionScreen(
         item {
             ExhibitionHeader(
                 progress = 0.60f,
+            )
+        }
+        item {
+            GallerySelector(
+                selectedGallery = selectedGallery,
+                onGallerySelected = { gallery ->
+                    selectedGallery = gallery
+                },
             )
         }
     }
@@ -107,5 +126,39 @@ private fun ExhibitionHeader(
             color = MaterialTheme.colorScheme.primary,
             trackColor = MaterialTheme.colorScheme.surfaceVariant,
         )
+    }
+}
+
+private enum class ExhibitionGallery(
+    val label: String,
+) {
+    CLIMATE("Gallery 1 · Climate"),
+    DINOSAURS("Gallery 2 · Dinosaurs"),
+    LIFE("Gallery 3 · Life"),
+}
+
+@Composable
+private fun GallerySelector(
+    selectedGallery: ExhibitionGallery,
+    onGallerySelected: (ExhibitionGallery) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        ExhibitionGallery.entries.forEach { gallery ->
+            FilterChip(
+                selected = gallery == selectedGallery,
+                onClick = {
+                    onGallerySelected(gallery)
+                },
+                label = {
+                    Text(gallery.label)
+                },
+            )
+        }
     }
 }
