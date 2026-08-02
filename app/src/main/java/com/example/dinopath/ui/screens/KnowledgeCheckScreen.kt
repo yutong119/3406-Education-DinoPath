@@ -28,6 +28,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material3.Button
 
 @Composable
 fun KnowledgeCheckScreen(
@@ -36,6 +39,10 @@ fun KnowledgeCheckScreen(
 ) {
     var selectedAnswer by rememberSaveable {
         mutableStateOf<String?>(null)
+    }
+
+    var hasSubmitted by rememberSaveable {
+        mutableStateOf(false)
     }
 
     LazyColumn(
@@ -57,10 +64,33 @@ fun KnowledgeCheckScreen(
         item {
             QuestionCard(
                 selectedAnswer = selectedAnswer,
+                hasSubmitted = hasSubmitted,
                 onAnswerSelected = { answer ->
-                    selectedAnswer = answer
+                    if (!hasSubmitted) {
+                        selectedAnswer = answer
+                    }
                 },
             )
+        }
+
+        item {
+            Button(
+                onClick = {
+                    hasSubmitted = true
+                },
+                enabled = selectedAnswer != null && !hasSubmitted,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("SUBMIT ANSWER")
+            }
+        }
+
+        if (hasSubmitted) {
+            item {
+                AnswerFeedbackCard(
+                    selectedAnswer = selectedAnswer.orEmpty(),
+                )
+            }
         }
     }
 }
@@ -117,6 +147,7 @@ private fun KnowledgeCheckHeader(
 @Composable
 private fun QuestionCard(
     selectedAnswer: String?,
+    hasSubmitted: Boolean,
     onAnswerSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -147,7 +178,9 @@ private fun QuestionCard(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {
+                        .clickable(
+                            enabled = !hasSubmitted,
+                        ) {
                             onAnswerSelected(option)
                         }
                         .padding(vertical = 4.dp),
@@ -155,6 +188,7 @@ private fun QuestionCard(
                 ) {
                     RadioButton(
                         selected = selectedAnswer == option,
+                        enabled = !hasSubmitted,
                         onClick = {
                             onAnswerSelected(option)
                         },
@@ -166,6 +200,73 @@ private fun QuestionCard(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun AnswerFeedbackCard(
+    selectedAnswer: String,
+    modifier: Modifier = Modifier,
+) {
+    val correctAnswer = "Brachiosaurus"
+    val isCorrect = selectedAnswer == correctAnswer
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        ),
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = if (isCorrect) {
+                        Icons.Outlined.CheckCircle
+                    } else {
+                        Icons.Outlined.ErrorOutline
+                    },
+                    contentDescription = null,
+                    tint = if (isCorrect) {
+                        MaterialTheme.colorScheme.secondary
+                    } else {
+                        MaterialTheme.colorScheme.error
+                    },
+                )
+
+                Text(
+                    text = if (isCorrect) {
+                        "Correct"
+                    } else {
+                        "Not quite"
+                    },
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+
+            if (!isCorrect) {
+                Text(
+                    text = "Correct answer: Brachiosaurus",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+
+            Text(
+                text =
+                    "Brachiosaurus lived during the Late Jurassic Period. " +
+                            "Tyrannosaurus rex, Triceratops and Velociraptor " +
+                            "appeared later during the Cretaceous Period.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
