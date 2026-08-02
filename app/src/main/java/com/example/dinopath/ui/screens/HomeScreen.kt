@@ -24,9 +24,13 @@ import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 
 @Composable
 fun HomeScreen(
+    onContinueExpedition: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -45,7 +49,9 @@ fun HomeScreen(
 
         item {
 
-            DailyExpeditionCard()
+            DailyExpeditionCard(
+                onContinueExpedition = onContinueExpedition,
+            )
 
         }
 
@@ -103,6 +109,7 @@ private fun HomeHeader(
 
 @Composable
 private fun DailyExpeditionCard(
+    onContinueExpedition: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -167,6 +174,23 @@ private fun DailyExpeditionCard(
                 color = MaterialTheme.colorScheme.primary,
                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
             )
+
+            Button(
+                onClick = onContinueExpedition,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    text = "CONTINUE EXPEDITION",
+                    fontWeight = FontWeight.Bold,
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                    contentDescription = null,
+                )
+            }
         }
     }
 }

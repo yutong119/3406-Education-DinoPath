@@ -39,7 +39,15 @@ fun DinoNavHost(
         }
 
         composable(DinoDestination.HOME.route) {
-            HomeScreen()
+            HomeScreen(
+                onContinueExpedition = {
+                    navController.navigate(
+                        DinoDestination.EXHIBITION.route,
+                        ) {
+                        launchSingleTop = true
+                    }
+                },
+                )
         }
 
         composable(DinoDestination.EXHIBITION.route) {
