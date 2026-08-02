@@ -10,6 +10,7 @@ import com.example.dinopath.ui.screens.ExhibitionScreen
 import com.example.dinopath.ui.screens.HomeScreen
 import com.example.dinopath.ui.screens.JournalScreen
 import com.example.dinopath.ui.screens.SettingsScreen
+import com.example.dinopath.ui.screens.WelcomeScreen
 
 @Composable
 fun DinoNavHost(
@@ -18,9 +19,25 @@ fun DinoNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = DinoDestination.HOME.route,
+        startDestination = AppRoutes.WELCOME,
         modifier = modifier,
     ) {
+        composable(AppRoutes.WELCOME) {
+            WelcomeScreen(
+                onEnterMuseum = {
+                    navController.navigate(
+                        DinoDestination.HOME.route,
+                    ) {
+                        popUpTo(AppRoutes.WELCOME) {
+                            inclusive = true
+                        }
+
+                        launchSingleTop = true
+                    }
+                },
+            )
+        }
+
         composable(DinoDestination.HOME.route) {
             HomeScreen()
         }
