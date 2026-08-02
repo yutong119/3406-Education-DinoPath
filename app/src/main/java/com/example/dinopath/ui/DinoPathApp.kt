@@ -16,6 +16,7 @@ import com.example.dinopath.navigation.DinoDestination
 import com.example.dinopath.navigation.DinoNavHost
 import com.example.dinopath.navigation.bottomNavDestinations
 import com.example.dinopath.ui.theme.DinoPathTheme
+import com.example.dinopath.navigation.navigateToTopLevelDestination
 
 @Composable
 fun DinoPathApp() {
@@ -56,7 +57,6 @@ fun DinoPathApp() {
                             if (currentRoute != destination.route) {
                                 navController.navigate(destination.route) {
                                     popUpTo(DinoDestination.HOME.route)
-                                    launchSingleTop = true
                                 }
                             }
                         },
