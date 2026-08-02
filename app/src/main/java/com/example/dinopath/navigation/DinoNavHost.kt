@@ -9,6 +9,7 @@ import com.example.dinopath.ui.screens.CollectionScreen
 import com.example.dinopath.ui.screens.ExhibitionScreen
 import com.example.dinopath.ui.screens.HomeScreen
 import com.example.dinopath.ui.screens.JournalScreen
+import com.example.dinopath.ui.screens.KnowledgeCheckScreen
 import com.example.dinopath.ui.screens.SettingsScreen
 import com.example.dinopath.ui.screens.WelcomeScreen
 
@@ -38,20 +39,39 @@ fun DinoNavHost(
             )
         }
 
+        /*
+         * Home must be registered exactly once.
+         */
         composable(DinoDestination.HOME.route) {
             HomeScreen(
                 onContinueExpedition = {
                     navController.navigate(
                         DinoDestination.EXHIBITION.route,
-                        ) {
+                    ) {
                         launchSingleTop = true
                     }
                 },
-                )
+            )
         }
 
         composable(DinoDestination.EXHIBITION.route) {
-            ExhibitionScreen()
+            ExhibitionScreen(
+                onStartKnowledgeCheck = {
+                    navController.navigate(
+                        AppRoutes.KNOWLEDGE_CHECK,
+                    ) {
+                        launchSingleTop = true
+                    }
+                },
+            )
+        }
+
+        composable(AppRoutes.KNOWLEDGE_CHECK) {
+            KnowledgeCheckScreen(
+                onBack = {
+                    navController.popBackStack()
+                },
+            )
         }
 
         composable(DinoDestination.JOURNAL.route) {

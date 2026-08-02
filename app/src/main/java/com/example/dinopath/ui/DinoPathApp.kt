@@ -1,7 +1,5 @@
 package com.example.dinopath.ui
 
-import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -12,11 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.dinopath.navigation.DinoDestination
 import com.example.dinopath.navigation.DinoNavHost
 import com.example.dinopath.navigation.bottomNavDestinations
-import com.example.dinopath.ui.theme.DinoPathTheme
 import com.example.dinopath.navigation.navigateToTopLevelDestination
+import com.example.dinopath.ui.theme.DinoPathTheme
 
 @Composable
 fun DinoPathApp() {
@@ -37,10 +34,16 @@ fun DinoPathApp() {
     val showNavigationSuite =
         currentRoute in bottomRoutes
 
-    if (showNavigationSuite) {
-        NavigationSuiteScaffold(
-            modifier = Modifier.fillMaxSize(),
-            navigationSuiteItems = {
+    /*
+     * Keep exactly one NavHost for the whole app.
+     *
+     * For Welcome and Knowledge Check, this scaffold remains present,
+     * but no navigation items are added, so the bottom navigation is hidden.
+     */
+    NavigationSuiteScaffold(
+        modifier = Modifier.fillMaxSize(),
+        navigationSuiteItems = {
+            if (showNavigationSuite) {
                 bottomNavDestinations.forEach { destination ->
                     item(
                         icon = {
@@ -52,24 +55,19 @@ fun DinoPathApp() {
                         label = {
                             Text(destination.label)
                         },
-                        selected = currentRoute == destination.route,
+                        selected =
+                            currentRoute == destination.route,
                         onClick = {
-                            if (currentRoute != destination.route) {
-                                navController.navigate(destination.route) {
-                                    popUpTo(DinoDestination.HOME.route)
-                                }
-                            }
+                            navController.navigateToTopLevelDestination(
+                                destination = destination,
+                                currentRoute = currentRoute,
+                            )
                         },
                     )
                 }
-            },
-        ) {
-            DinoNavHost(
-                navController = navController,
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
-    } else {
+            }
+        },
+    ) {
         DinoNavHost(
             navController = navController,
             modifier = Modifier.fillMaxSize(),
