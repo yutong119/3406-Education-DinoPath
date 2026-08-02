@@ -26,6 +26,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 
 @Composable
 fun ExhibitionScreen(
@@ -56,6 +59,11 @@ fun ExhibitionScreen(
                 onGallerySelected = { gallery ->
                     selectedGallery = gallery
                 },
+            )
+        }
+        item {
+            GalleryLearningCard(
+                gallery = selectedGallery,
             )
         }
     }
@@ -160,5 +168,118 @@ private fun GallerySelector(
                 },
             )
         }
+    }
+}
+
+@Composable
+private fun GalleryLearningCard(
+    gallery: ExhibitionGallery,
+    modifier: Modifier = Modifier,
+) {
+    val content = gallery.content()
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            Text(
+                text = content.title,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            Text(
+                text = content.introduction,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Text(
+                text = "KEY FACTS",
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+            )
+
+            content.facts.forEach { fact ->
+                Text(
+                    text = "•  $fact",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+
+            Text(
+                text = "THINK ABOUT IT",
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.secondary,
+            )
+
+            Text(
+                text = content.reflectionQuestion,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+private data class GalleryContent(
+    val title: String,
+    val introduction: String,
+    val facts: List<String>,
+    val reflectionQuestion: String,
+)
+
+private fun ExhibitionGallery.content(): GalleryContent {
+    return when (this) {
+        ExhibitionGallery.CLIMATE -> GalleryContent(
+            title = "Climate and Environment",
+            introduction =
+                "The Jurassic Period was generally warm and humid. " +
+                        "Large forests spread across many parts of Earth.",
+            facts = listOf(
+                "There were no permanent polar ice caps.",
+                "Pangaea gradually began to separate.",
+                "Warm forests supported large herbivorous dinosaurs.",
+            ),
+            reflectionQuestion =
+                "How might a warm climate have helped very large dinosaurs survive?",
+        )
+
+        ExhibitionGallery.DINOSAURS -> GalleryContent(
+            title = "Jurassic Dinosaurs",
+            introduction =
+                "The Jurassic Period was home to enormous sauropods, " +
+                        "armoured herbivores and powerful predators.",
+            facts = listOf(
+                "Brachiosaurus used its long neck to reach vegetation.",
+                "Stegosaurus had large plates and a spiked tail.",
+                "Allosaurus was one of the major Jurassic predators.",
+            ),
+            reflectionQuestion =
+                "Why might different body shapes have helped dinosaurs share one habitat?",
+        )
+
+        ExhibitionGallery.LIFE -> GalleryContent(
+            title = "Life Beyond Dinosaurs",
+            introduction =
+                "Jurassic ecosystems included marine reptiles, early mammals, " +
+                        "insects, plants and the earliest known birds.",
+            facts = listOf(
+                "Small mammals lived alongside dinosaurs.",
+                "Marine reptiles occupied Jurassic oceans.",
+                "Archaeopteryx had both dinosaur and bird features.",
+            ),
+            reflectionQuestion =
+                "What evidence connects some dinosaurs with modern birds?",
+        )
     }
 }
