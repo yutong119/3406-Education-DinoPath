@@ -36,6 +36,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.dinopath.ui.theme.DinoPathTheme
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 
 private data class QuizQuestion(
     val question: String,
@@ -226,10 +228,14 @@ private fun KnowledgeCheckHeader(
         ) {
             IconButton(
                 onClick = onBack,
+                modifier = Modifier.semantics {
+                    contentDescription =
+                        "Back to Jurassic Period exhibition"
+                },
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                    contentDescription = "Return to exhibition",
+                    contentDescription = null,
                 )
             }
 
