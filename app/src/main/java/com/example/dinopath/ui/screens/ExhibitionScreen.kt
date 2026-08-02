@@ -37,6 +37,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.outlined.Pets
 import androidx.compose.material3.Button
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.dinopath.ui.theme.DinoPathTheme
 
 @Composable
 fun ExhibitionScreen(
@@ -48,7 +53,12 @@ fun ExhibitionScreen(
     }
 
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .semantics {
+                contentDescription = "Jurassic Period exhibition"
+
+            },
         contentPadding = PaddingValues(
             start = 20.dp,
             top = 24.dp,
@@ -113,6 +123,9 @@ private fun ExhibitionHeader(
             ) {
                 Text(
                     text = "Jurassic Period",
+                    modifier = Modifier.semantics {
+                        heading()
+                    },
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -422,3 +435,16 @@ private val dinosaurHighlights = listOf(
         description = "A large predator of the Late Jurassic.",
     ),
 )
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+)
+@Composable
+private fun ExhibitionScreenPreview() {
+    DinoPathTheme {
+        ExhibitionScreen(
+            onStartKnowledgeCheck = {},
+        )
+    }
+}

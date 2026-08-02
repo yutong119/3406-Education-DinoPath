@@ -34,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.dinopath.ui.theme.DinoPathTheme
 
 private data class QuizQuestion(
     val question: String,
@@ -442,5 +444,18 @@ private fun QuizResultScreen(
         ) {
             Text("RETURN TO EXHIBITION")
         }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+)
+@Composable
+private fun KnowledgeCheckScreenPreview() {
+    DinoPathTheme {
+        KnowledgeCheckScreen(
+            onBack = {},
+        )
     }
 }
