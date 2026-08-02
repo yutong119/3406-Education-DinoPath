@@ -6,25 +6,24 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.dinopath.navigation.DinoDestination
+import com.example.dinopath.navigation.DinoNavHost
 import com.example.dinopath.navigation.bottomNavDestinations
-import com.example.dinopath.ui.screens.CollectionScreen
-import com.example.dinopath.ui.screens.ExhibitionScreen
-import com.example.dinopath.ui.screens.HomeScreen
-import com.example.dinopath.ui.screens.JournalScreen
-import com.example.dinopath.ui.screens.SettingsScreen
 import com.example.dinopath.ui.theme.DinoPathTheme
 
 @Composable
 fun DinoPathApp() {
-    var currentDestination by rememberSaveable {
-        mutableStateOf(DinoDestination.HOME)
-    }
+    val navController = rememberNavController()
+
+    val currentBackStackEntry by
+    navController.currentBackStackEntryAsState()
+
+    val currentRoute =
+        currentBackStackEntry?.destination?.route
 
     NavigationSuiteScaffold(
         modifier = Modifier.fillMaxSize(),
@@ -40,35 +39,23 @@ fun DinoPathApp() {
                     label = {
                         Text(destination.label)
                     },
-                    selected = destination == currentDestination,
+                    selected = currentRoute == destination.route,
                     onClick = {
-                        currentDestination = destination
+                        if (currentRoute != destination.route) {
+                            navController.navigate(destination.route) {
+                                popUpTo(DinoDestination.HOME.route)
+                                launchSingleTop = true
+                            }
+                        }
                     },
                 )
             }
         },
     ) {
-        when (currentDestination) {
-            DinoDestination.HOME -> {
-                HomeScreen()
-            }
-
-            DinoDestination.EXHIBITION -> {
-                ExhibitionScreen()
-            }
-
-            DinoDestination.JOURNAL -> {
-                JournalScreen()
-            }
-
-            DinoDestination.COLLECTION -> {
-                CollectionScreen()
-            }
-
-            DinoDestination.SETTINGS -> {
-                SettingsScreen()
-            }
-        }
+        DinoNavHost(
+            navController = navController,
+            modifier = Modifier.fillMaxSize(),
+        )
     }
 }
 
