@@ -23,12 +23,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.clickable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 
 @Composable
 fun KnowledgeCheckScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var selectedAnswer by rememberSaveable {
+        mutableStateOf<String?>(null)
+    }
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(
@@ -46,7 +55,12 @@ fun KnowledgeCheckScreen(
         }
 
         item {
-            StaticQuestionCard()
+            QuestionCard(
+                selectedAnswer = selectedAnswer,
+                onAnswerSelected = { answer ->
+                    selectedAnswer = answer
+                },
+            )
         }
     }
 }
@@ -101,7 +115,9 @@ private fun KnowledgeCheckHeader(
 }
 
 @Composable
-private fun StaticQuestionCard(
+private fun QuestionCard(
+    selectedAnswer: String?,
+    onAnswerSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val options = listOf(
@@ -129,11 +145,19 @@ private fun StaticQuestionCard(
 
             options.forEach { option ->
                 Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onAnswerSelected(option)
+                        }
+                        .padding(vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     RadioButton(
-                        selected = false,
-                        onClick = null,
+                        selected = selectedAnswer == option,
+                        onClick = {
+                            onAnswerSelected(option)
+                        },
                     )
 
                     Text(
