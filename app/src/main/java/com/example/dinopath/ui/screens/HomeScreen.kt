@@ -38,6 +38,11 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.RadioButtonChecked
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.dinopath.ui.theme.DinoPathTheme
 
 @Composable
 fun HomeScreen(
@@ -45,10 +50,16 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .semantics {
+                contentDescription = "DinoPath home screen"
+            },
         contentPadding = PaddingValues(
-            horizontal = 20.dp,
-            vertical = 24.dp,
+            start = 20.dp,
+            top = 24.dp,
+            end = 20.dp,
+            bottom = 40.dp,
         ),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
@@ -99,17 +110,24 @@ private fun HomeHeader(
                 text = "Your Prehistoric Journey",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.semantics {
+                    heading()
+                },
             )
         }
 
         Row(
-            modifier = Modifier.padding(top = 4.dp),
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .semantics {
+                    contentDescription = "$totalStars total stars"
+                },
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 imageVector = Icons.Outlined.Star,
-                contentDescription = "Total stars",
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
             )
 
@@ -486,3 +504,16 @@ private val journeyChapters = listOf(
         status = ChapterStatus.LOCKED,
     ),
 )
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+)
+@Composable
+private fun HomeScreenPreview() {
+    DinoPathTheme {
+        HomeScreen(
+            onContinueExpedition = {},
+        )
+    }
+}
