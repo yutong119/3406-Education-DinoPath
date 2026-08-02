@@ -2,10 +2,24 @@ package com.example.dinopath.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Brand colours
+val DeepForestGreen = Color(0xFF081E14)
+val ForestGreen = Color(0xFF0D2A1B)
+val MuseumGreen = Color(0xFF234D35)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val AmberGold = Color(0xFFE0B85A)
+val DarkAmberGold = Color(0xFFB98A32)
+
+val WarmIvory = Color(0xFFF7F1E5)
+val FossilBrown = Color(0xFF6B4B32)
+val SoftGreen = Color(0xFF9CBD83)
+
+// Dark surfaces
+val DarkMuseumSurface = Color(0xFF12281C)
+val DarkMuseumSurfaceVariant = Color(0xFF294235)
+
+// Light surfaces
+val LightMuseumSurface = Color(0xFFFFFBF4)
+val LightMuseumSurfaceVariant = Color(0xFFE8E2D5)
+
+val ErrorRed = Color(0xFFFFB4AB)
