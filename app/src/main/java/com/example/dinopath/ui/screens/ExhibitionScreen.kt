@@ -36,10 +36,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.outlined.Pets
-
+import androidx.compose.material3.Button
 
 @Composable
 fun ExhibitionScreen(
+    onStartKnowledgeCheck: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selectedGallery by rememberSaveable {
@@ -76,6 +77,18 @@ fun ExhibitionScreen(
         }
         item {
             DinosaurHighlightsSection()
+        }
+
+        item {
+            Button(
+                onClick = onStartKnowledgeCheck,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    text = "START KNOWLEDGE CHECK",
+                    fontWeight = FontWeight.Bold,
+                )
+            }
         }
     }
 }
@@ -272,10 +285,13 @@ private fun DinosaurHighlightsSection(
                 DinosaurHighlightCard(
                     dinosaur = dinosaurHighlights[index],
                 )
+
             }
+
         }
     }
 }
+
 
 @Composable
 private fun DinosaurHighlightCard(
