@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -27,6 +28,9 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -79,6 +83,8 @@ private fun KnowledgeCheckContent(
             totalQuestions = uiState.totalQuestions,
             earnedStars = uiState.earnedStars,
             savedAccuracy = uiState.savedAccuracy,
+            questions = uiState.questions,
+            answers = uiState.submittedAnswers,
             onReturnToExhibition = onBack,
             onBackToLobby = onBackToLobby,
             modifier = modifier,
@@ -396,63 +402,174 @@ private fun QuizResultScreen(
     totalQuestions: Int,
     earnedStars: Int,
     savedAccuracy: Int,
+    questions: List<QuizQuestion>,
+    answers: Map<Int, String>,
     onReturnToExhibition: () -> Unit,
     onBackToLobby: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    var showReview by remember { mutableStateOf(false) }
+
+    LazyColumn(
         modifier = modifier
-            .fillMaxSize()
-            .padding(24.dp),
+            .fillMaxSize(),
+        contentPadding = PaddingValues(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Icon(
-            imageVector = Icons.Outlined.Star,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-        )
-
-        Text(
-            text = "Exhibition Complete!",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-        )
-
-        Text(
-            text = "★".repeat(earnedStars) + "☆".repeat(3 - earnedStars),
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.primary,
-        )
-
-        Text(
-            text = "Score: $score / $totalQuestions",
-            style = MaterialTheme.typography.titleLarge,
-        )
-
-        Text(
-            text = "Accuracy: $savedAccuracy%",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-
-        Button(
-            onClick = onBackToLobby,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 24.dp),
-        ) {
-            Text("BACK TO LOBBY")
+        item {
+            Icon(
+                imageVector = Icons.Outlined.Star,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
         }
 
-        OutlinedButton(
-            onClick = onReturnToExhibition,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp),
+        item {
+            Text(
+                text = "Exhibition Complete!",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        }
+
+        item {
+            Text(
+                text = "★".repeat(earnedStars) + "☆".repeat(3 - earnedStars),
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        }
+
+        item {
+            Text(
+                text = "Score: $score / $totalQuestions",
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }
+
+        item {
+            Text(
+                text = "Accuracy: $savedAccuracy%",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
+        item {
+            Button(
+                onClick = onBackToLobby,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+            ) {
+                Text("BACK TO LOBBY")
+            }
+        }
+
+        item {
+            OutlinedButton(
+                onClick = { showReview = !showReview },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(if (showReview) "HIDE REVIEW" else "REVIEW ANSWERS")
+            }
+        }
+
+        if (showReview) {
+            items(questions) { question ->
+                ReviewQuestionItem(
+                    question = question,
+                    userAnswer = answers[question.id].orEmpty(),
+                )
+            }
+        }
+
+        item {
+            OutlinedButton(
+                onClick = onReturnToExhibition,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+            ) {
+                Text("RETURN TO EXHIBITION")
+            }
+        }
+    }
+}
+
+@Composable
+private fun ReviewQuestionItem(
+    question: QuizQuestion,
+    userAnswer: String,
+    modifier: Modifier = Modifier,
+) {
+    val isCorrect = userAnswer == question.correctAnswer
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        ),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text("RETURN TO EXHIBITION")
+            Text(
+                text = question.question,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Icon(
+                    imageVector = if (isCorrect) {
+                        Icons.Outlined.CheckCircle
+                    } else {
+                        Icons.Outlined.ErrorOutline
+                    },
+                    contentDescription = null,
+                    tint = if (isCorrect) {
+                        MaterialTheme.colorScheme.secondary
+                    } else {
+                        MaterialTheme.colorScheme.error
+                    },
+                )
+                Text(
+                    text = if (isCorrect) "Correct" else "Incorrect",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isCorrect) {
+                        MaterialTheme.colorScheme.secondary
+                    } else {
+                        MaterialTheme.colorScheme.error
+                    },
+                )
+            }
+
+            Text(
+                text = "Your answer: $userAnswer",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+
+            if (!isCorrect) {
+                Text(
+                    text = "Correct answer: ${question.correctAnswer}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+
+            Text(
+                text = question.explanation,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
