@@ -158,6 +158,44 @@ class KnowledgeCheckViewModelTest {
         assertFalse(state.isComplete)
         assertEquals("Network error", state.saveError)
     }
+
+    @Test
+    fun multipleClicksOnLastQuestion_doesNotTriggerMultipleSaves() = runTest {
+        var callCount = 0
+        val countingRepo = object : FakeLearningProgressRepository() {
+            override suspend fun saveQuizCompletion(
+                chapterId: Int,
+                questions: List<QuizQuestion>,
+                answers: Map<Int, String>,
+                score: Int,
+            ): QuizCompletion {
+                callCount++
+                return super.saveQuizCompletion(chapterId, questions, answers, score)
+            }
+        }
+        viewModel = KnowledgeCheckViewModel(
+            quizRepository = FakeQuizRepository(),
+            learningProgressRepository = countingRepo,
+        )
+
+        // Complete first 2 questions
+        repeat(2) {
+            viewModel.selectAnswer("Correct A")
+            viewModel.submitAnswer()
+            viewModel.moveToNextQuestion()
+        }
+
+        // Last question
+        viewModel.selectAnswer("Correct A")
+        viewModel.submitAnswer()
+        
+        // Trigger move to next (which triggers save) multiple times
+        viewModel.moveToNextQuestion()
+        viewModel.moveToNextQuestion()
+        viewModel.moveToNextQuestion()
+
+        assertEquals(1, callCount)
+    }
 }
 
 private class FakeQuizRepository : QuizRepository {

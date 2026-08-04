@@ -111,15 +111,22 @@ class KnowledgeCheckViewModel @Inject constructor(
     private fun saveCompletion(
         currentState: KnowledgeCheckUiState,
     ) {
-        if (currentState.isSaving) {
-            return
+        var shouldStartSaving = false
+        _uiState.update { state ->
+            if (state.isSaving || state.isComplete) {
+                shouldStartSaving = false
+                state
+            } else {
+                shouldStartSaving = true
+                state.copy(
+                    isSaving = true,
+                    saveError = null,
+                )
+            }
         }
 
-        _uiState.update {
-            it.copy(
-                isSaving = true,
-                saveError = null,
-            )
+        if (!shouldStartSaving) {
+            return
         }
 
         viewModelScope.launch {
