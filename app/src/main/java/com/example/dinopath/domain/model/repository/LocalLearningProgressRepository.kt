@@ -11,6 +11,8 @@ import com.example.dinopath.domain.model.ChapterStatus
 import com.example.dinopath.domain.model.QuizCompletion
 import com.example.dinopath.domain.model.QuizQuestion
 import com.example.dinopath.domain.repository.LearningProgressRepository
+import com.example.dinopath.domain.scoring.calculateAccuracy
+import com.example.dinopath.domain.scoring.calculateStars
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -46,18 +48,15 @@ class LocalLearningProgressRepository @Inject constructor(
         score: Int,
     ): QuizCompletion {
         val totalQuestions = questions.size
-        val accuracy = if (totalQuestions == 0) {
-            0
-        } else {
-            score * 100 / totalQuestions
-        }
+        val accuracy = calculateAccuracy(
+            score = score,
+            totalQuestions = totalQuestions,
+        )
 
-        val stars = when {
-            totalQuestions == 0 -> 0
-            score == totalQuestions -> 3
-            score == totalQuestions - 1 -> 2
-            else -> 1
-        }
+        val stars = calculateStars(
+            score = score,
+            totalQuestions = totalQuestions,
+        )
 
         database.withTransaction {
             val currentChapter =

@@ -8,10 +8,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
+import com.example.dinopath.domain.repository.LearningProgressRepository
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class KnowledgeCheckViewModel @Inject constructor(
     quizRepository: QuizRepository,
+    private val learningProgressRepository:
+         LearningProgressRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -73,9 +78,8 @@ class KnowledgeCheckViewModel @Inject constructor(
             }
 
             if (currentState.isLastQuestion) {
-                currentState.copy(
-                    isComplete = true,
-                )
+                saveCompletion(currentState)
+                currentState
             } else {
                 currentState.copy(
                     currentQuestionIndex =
@@ -95,7 +99,57 @@ class KnowledgeCheckViewModel @Inject constructor(
                 hasSubmitted = false,
                 score = 0,
                 isComplete = false,
+                submittedAnswers = emptyMap(),
+                earnedStars = 0,
+                savedAccuracy = 0,
+                isSaving = false,
+                saveError = null,
             )
         }
     }
+
+    private fun saveCompletion(
+        currentState: KnowledgeCheckUiState,
+    ) {
+        if (currentState.isSaving) {
+            return
+        }
+
+        _uiState.update {
+            it.copy(
+                isSaving = true,
+                saveError = null,
+            )
+        }
+
+        viewModelScope.launch {
+            runCatching {
+                learningProgressRepository.saveQuizCompletion(
+                    chapterId = 3,
+                    questions = currentState.questions,
+                    answers = currentState.submittedAnswers,
+                    score = currentState.score,
+                )
+            }.onSuccess { completion ->
+                _uiState.update {
+                    it.copy(
+                        isSaving = false,
+                        isComplete = true,
+                        earnedStars = completion.stars,
+                        savedAccuracy = completion.accuracy,
+                    )
+                }
+            }.onFailure { error ->
+                _uiState.update {
+                    it.copy(
+                        isSaving = false,
+                        saveError =
+                            error.message
+                                ?: "Unable to save progress.",
+                    )
+                }
+            }
+        }
+    }
 }
+

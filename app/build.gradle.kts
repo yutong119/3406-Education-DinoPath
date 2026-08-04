@@ -76,6 +76,9 @@ dependencies {
     kapt(libs.androidx.room.compiler)
 
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
+
+    implementation(libs.kotlinx.coroutines.android)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
 
 kapt {
