@@ -17,6 +17,7 @@ import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -29,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.dinopath.ui.theme.DinoPathTheme
@@ -43,6 +45,7 @@ import com.example.dinopath.ui.knowledge.KnowledgeCheckViewModel
 fun KnowledgeCheckScreen(
     viewModel: KnowledgeCheckViewModel,
     onBack: () -> Unit,
+    onBackToLobby: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -52,7 +55,9 @@ fun KnowledgeCheckScreen(
         onAnswerSelected = viewModel::selectAnswer,
         onSubmitAnswer = viewModel::submitAnswer,
         onNextQuestion = viewModel::moveToNextQuestion,
+        onRetrySave = viewModel::moveToNextQuestion, // Trigger save again
         onBack = onBack,
+        onBackToLobby = onBackToLobby,
         modifier = modifier,
     )
 }
@@ -63,14 +68,29 @@ private fun KnowledgeCheckContent(
     onAnswerSelected: (String) -> Unit,
     onSubmitAnswer: () -> Unit,
     onNextQuestion: () -> Unit,
+    onRetrySave: () -> Unit,
     onBack: () -> Unit,
+    onBackToLobby: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (uiState.isComplete) {
         QuizResultScreen(
             score = uiState.score,
             totalQuestions = uiState.totalQuestions,
+            earnedStars = uiState.earnedStars,
+            savedAccuracy = uiState.savedAccuracy,
             onReturnToExhibition = onBack,
+            onBackToLobby = onBackToLobby,
+            modifier = modifier,
+        )
+        return
+    }
+
+    if (uiState.isSaving || uiState.saveError != null) {
+        QuizSavingScreen(
+            isSaving = uiState.isSaving,
+            error = uiState.saveError,
+            onRetry = onRetrySave,
             modifier = modifier,
         )
         return
@@ -321,21 +341,65 @@ private fun AnswerFeedbackCard(
 }
 
 @Composable
+private fun QuizSavingScreen(
+    isSaving: Boolean,
+    error: String?,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        if (isSaving) {
+            CircularProgressIndicator()
+            Text(
+                text = "Saving your progress...",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(top = 16.dp),
+            )
+        } else if (error != null) {
+            Icon(
+                imageVector = Icons.Outlined.ErrorOutline,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(bottom = 16.dp),
+            )
+            Text(
+                text = "Failed to save results",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.error,
+            )
+            Text(
+                text = error,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 12.dp),
+            )
+            Button(
+                onClick = onRetry,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("RETRY")
+            }
+        }
+    }
+}
+
+@Composable
 private fun QuizResultScreen(
     score: Int,
     totalQuestions: Int,
+    earnedStars: Int,
+    savedAccuracy: Int,
     onReturnToExhibition: () -> Unit,
+    onBackToLobby: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val stars = when (score) {
-        totalQuestions -> 3
-        totalQuestions - 1 -> 2
-        else -> 1
-    }
-
-    val accuracy =
-        (score.toFloat() / totalQuestions.toFloat() * 100).toInt()
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -357,7 +421,7 @@ private fun QuizResultScreen(
         )
 
         Text(
-            text = "★".repeat(stars) + "☆".repeat(3 - stars),
+            text = "★".repeat(earnedStars) + "☆".repeat(3 - earnedStars),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary,
         )
@@ -368,16 +432,25 @@ private fun QuizResultScreen(
         )
 
         Text(
-            text = "Accuracy: $accuracy%",
+            text = "Accuracy: $savedAccuracy%",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
         Button(
-            onClick = onReturnToExhibition,
+            onClick = onBackToLobby,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 24.dp),
+        ) {
+            Text("BACK TO LOBBY")
+        }
+
+        OutlinedButton(
+            onClick = onReturnToExhibition,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp),
         ) {
             Text("RETURN TO EXHIBITION")
         }
@@ -413,7 +486,9 @@ private fun KnowledgeCheckScreenPreview() {
             onAnswerSelected = {},
             onSubmitAnswer = {},
             onNextQuestion = {},
+            onRetrySave = {},
             onBack = {},
+            onBackToLobby = {},
         )
     }
 }

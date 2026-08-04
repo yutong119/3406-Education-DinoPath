@@ -81,6 +81,14 @@ fun DinoNavHost(
                 onBack = {
                     navController.popBackStack()
                 },
+                onBackToLobby = {
+                    navController.navigate(DinoDestination.HOME.route) {
+                        popUpTo(DinoDestination.HOME.route) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                },
             )
         }
 
