@@ -12,6 +12,8 @@ import com.example.dinopath.ui.screens.JournalScreen
 import com.example.dinopath.ui.screens.KnowledgeCheckScreen
 import com.example.dinopath.ui.screens.SettingsScreen
 import com.example.dinopath.ui.screens.WelcomeScreen
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.example.dinopath.ui.knowledge.KnowledgeCheckViewModel
 
 @Composable
 fun DinoNavHost(
@@ -67,7 +69,11 @@ fun DinoNavHost(
         }
 
         composable(AppRoutes.KNOWLEDGE_CHECK) {
+            val viewModel: KnowledgeCheckViewModel =
+                hiltViewModel()
+
             KnowledgeCheckScreen(
+                viewModel = viewModel,
                 onBack = {
                     navController.popBackStack()
                 },

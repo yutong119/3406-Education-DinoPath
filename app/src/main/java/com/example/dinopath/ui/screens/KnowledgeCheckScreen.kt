@@ -26,10 +26,6 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -39,89 +35,49 @@ import com.example.dinopath.ui.theme.DinoPathTheme
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import com.example.dinopath.domain.model.QuizQuestion
-
-
-private val jurassicQuestions = listOf(
-    QuizQuestion(
-        id = 1,
-        question = "Which dinosaur lived during the Jurassic Period?",
-        options = listOf(
-            "Tyrannosaurus rex",
-            "Brachiosaurus",
-            "Triceratops",
-            "Velociraptor",
-        ),
-        correctAnswer = "Brachiosaurus",
-        explanation =
-            "Brachiosaurus lived during the Late Jurassic. " +
-                    "The other three appeared during the Cretaceous.",
-    ),
-    QuizQuestion(
-        id = 2,
-        question = "What was the general Jurassic climate like?",
-        options = listOf(
-            "Mostly warm and humid",
-            "Permanently frozen",
-            "Completely dry worldwide",
-            "Identical to today's climate",
-        ),
-        correctAnswer = "Mostly warm and humid",
-        explanation =
-            "The Jurassic climate was generally warm and humid, " +
-                    "supporting extensive forests and large herbivores.",
-    ),
-    QuizQuestion(
-        id = 3,
-        question = "Which animal shows features linking dinosaurs and birds?",
-        options = listOf(
-            "Archaeopteryx",
-            "Triceratops",
-            "Diplodocus",
-            "Mosasaurus",
-        ),
-        correctAnswer = "Archaeopteryx",
-        explanation =
-            "Archaeopteryx had feathers and wings as well as " +
-                    "several dinosaur-like skeletal features.",
-    ),
-)
+import androidx.compose.runtime.collectAsState
+import com.example.dinopath.ui.knowledge.KnowledgeCheckUiState
+import com.example.dinopath.ui.knowledge.KnowledgeCheckViewModel
 
 @Composable
 fun KnowledgeCheckScreen(
+    viewModel: KnowledgeCheckViewModel,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var currentQuestionIndex by rememberSaveable {
-        mutableIntStateOf(0)
-    }
+    val uiState by viewModel.uiState.collectAsState()
 
-    var selectedAnswer by rememberSaveable {
-        mutableStateOf<String?>(null)
-    }
+    KnowledgeCheckContent(
+        uiState = uiState,
+        onAnswerSelected = viewModel::selectAnswer,
+        onSubmitAnswer = viewModel::submitAnswer,
+        onNextQuestion = viewModel::moveToNextQuestion,
+        onBack = onBack,
+        modifier = modifier,
+    )
+}
 
-    var hasSubmitted by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    var score by rememberSaveable {
-        mutableIntStateOf(0)
-    }
-
-    var isComplete by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    if (isComplete) {
+@Composable
+private fun KnowledgeCheckContent(
+    uiState: KnowledgeCheckUiState,
+    onAnswerSelected: (String) -> Unit,
+    onSubmitAnswer: () -> Unit,
+    onNextQuestion: () -> Unit,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (uiState.isComplete) {
         QuizResultScreen(
-            score = score,
-            totalQuestions = jurassicQuestions.size,
+            score = uiState.score,
+            totalQuestions = uiState.totalQuestions,
             onReturnToExhibition = onBack,
             modifier = modifier,
         )
         return
     }
 
-    val question = jurassicQuestions[currentQuestionIndex]
+    val question =
+        uiState.currentQuestion ?: return
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -135,8 +91,8 @@ fun KnowledgeCheckScreen(
     ) {
         item {
             KnowledgeCheckHeader(
-                questionNumber = currentQuestionIndex + 1,
-                totalQuestions = jurassicQuestions.size,
+                questionNumber = uiState.questionNumber,
+                totalQuestions = uiState.totalQuestions,
                 onBack = onBack,
             )
         }
@@ -144,27 +100,17 @@ fun KnowledgeCheckScreen(
         item {
             QuestionCard(
                 question = question,
-                selectedAnswer = selectedAnswer,
-                hasSubmitted = hasSubmitted,
-                onAnswerSelected = { answer ->
-                    if (!hasSubmitted) {
-                        selectedAnswer = answer
-                    }
-                },
+                selectedAnswer = uiState.selectedAnswer,
+                hasSubmitted = uiState.hasSubmitted,
+                onAnswerSelected = onAnswerSelected,
             )
         }
 
-        if (!hasSubmitted) {
+        if (!uiState.hasSubmitted) {
             item {
                 Button(
-                    onClick = {
-                        hasSubmitted = true
-
-                        if (selectedAnswer == question.correctAnswer) {
-                            score += 1
-                        }
-                    },
-                    enabled = selectedAnswer != null,
+                    onClick = onSubmitAnswer,
+                    enabled = uiState.selectedAnswer != null,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text("SUBMIT ANSWER")
@@ -174,34 +120,21 @@ fun KnowledgeCheckScreen(
             item {
                 AnswerFeedbackCard(
                     question = question,
-                    selectedAnswer = selectedAnswer.orEmpty(),
+                    selectedAnswer =
+                        uiState.selectedAnswer.orEmpty(),
                 )
             }
 
             item {
                 Button(
-                    onClick = {
-                        if (
-                            currentQuestionIndex <
-                            jurassicQuestions.lastIndex
-                        ) {
-                            currentQuestionIndex += 1
-                            selectedAnswer = null
-                            hasSubmitted = false
-                        } else {
-                            isComplete = true
-                        }
-                    },
+                    onClick = onNextQuestion,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
-                        text = if (
-                            currentQuestionIndex <
-                            jurassicQuestions.lastIndex
-                        ) {
-                            "NEXT QUESTION"
-                        } else {
+                        text = if (uiState.isLastQuestion) {
                             "VIEW RESULT"
+                        } else {
+                            "NEXT QUESTION"
                         },
                     )
                 }
@@ -458,8 +391,30 @@ private fun QuizResultScreen(
 @Composable
 private fun KnowledgeCheckScreenPreview() {
     DinoPathTheme {
-        KnowledgeCheckScreen(
+        KnowledgeCheckContent(
+            uiState = KnowledgeCheckUiState(
+                questions = listOf(
+                    QuizQuestion(
+                        id = 1,
+                        question =
+                            "Which dinosaur lived during the Jurassic Period?",
+                        options = listOf(
+                            "Tyrannosaurus rex",
+                            "Brachiosaurus",
+                            "Triceratops",
+                            "Velociraptor",
+                        ),
+                        correctAnswer = "Brachiosaurus",
+                        explanation =
+                            "Brachiosaurus lived during the Jurassic Period.",
+                    ),
+                ),
+            ),
+            onAnswerSelected = {},
+            onSubmitAnswer = {},
+            onNextQuestion = {},
             onBack = {},
         )
     }
 }
+
