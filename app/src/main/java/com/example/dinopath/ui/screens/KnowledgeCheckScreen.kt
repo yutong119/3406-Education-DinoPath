@@ -38,16 +38,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.dinopath.ui.theme.DinoPathTheme
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import com.example.dinopath.domain.model.QuizQuestion
 
-private data class QuizQuestion(
-    val question: String,
-    val options: List<String>,
-    val correctAnswer: String,
-    val explanation: String,
-)
 
 private val jurassicQuestions = listOf(
     QuizQuestion(
+        id = 1,
         question = "Which dinosaur lived during the Jurassic Period?",
         options = listOf(
             "Tyrannosaurus rex",
@@ -61,6 +57,7 @@ private val jurassicQuestions = listOf(
                     "The other three appeared during the Cretaceous.",
     ),
     QuizQuestion(
+        id = 2,
         question = "What was the general Jurassic climate like?",
         options = listOf(
             "Mostly warm and humid",
@@ -74,6 +71,7 @@ private val jurassicQuestions = listOf(
                     "supporting extensive forests and large herbivores.",
     ),
     QuizQuestion(
+        id = 3,
         question = "Which animal shows features linking dinosaurs and birds?",
         options = listOf(
             "Archaeopteryx",
