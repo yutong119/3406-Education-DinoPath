@@ -6,6 +6,7 @@ import com.example.dinopath.data.local.dao.DinoPathDao
 import com.example.dinopath.data.local.entity.ChapterProgressEntity
 import com.example.dinopath.data.local.entity.MistakeEntity
 import com.example.dinopath.data.local.entity.QuizResultEntity
+import com.example.dinopath.domain.model.ChapterIds
 import com.example.dinopath.domain.model.ChapterProgress
 import com.example.dinopath.domain.model.ChapterStatus
 import com.example.dinopath.domain.model.QuizCompletion
@@ -159,7 +160,7 @@ private fun ChapterProgressEntity.toDomain(): ChapterProgress {
 
 private val initialChapters = listOf(
     ChapterProgressEntity(
-        chapterId = 1,
+        chapterId = ChapterIds.MEET_THE_DINOSAURS,
         chapterOrder = 1,
         title = "Meet the Dinosaurs",
         subtitle = "Introduction to prehistoric life",
@@ -171,7 +172,7 @@ private val initialChapters = listOf(
         bestAccuracy = 100,
     ),
     ChapterProgressEntity(
-        chapterId = 2,
+        chapterId = ChapterIds.TRIASSIC_PERIOD,
         chapterOrder = 2,
         title = "Triassic Period",
         subtitle = "The first dinosaurs emerge",
@@ -183,7 +184,7 @@ private val initialChapters = listOf(
         bestAccuracy = 66,
     ),
     ChapterProgressEntity(
-        chapterId = 3,
+        chapterId = ChapterIds.JURASSIC_PERIOD,
         chapterOrder = 3,
         title = "Jurassic Period",
         subtitle = "Giants dominate the Earth",
@@ -191,7 +192,7 @@ private val initialChapters = listOf(
         isUnlocked = true,
     ),
     ChapterProgressEntity(
-        chapterId = 4,
+        chapterId = ChapterIds.CRETACEOUS_PERIOD,
         chapterOrder = 4,
         title = "Cretaceous Period",
         subtitle = "A changing prehistoric world",
@@ -199,7 +200,7 @@ private val initialChapters = listOf(
         isUnlocked = false,
     ),
     ChapterProgressEntity(
-        chapterId = 5,
+        chapterId = ChapterIds.HABITATS_AND_DIETS,
         chapterOrder = 5,
         title = "Dinosaur Habitats and Diets",
         subtitle = "How dinosaurs lived and ate",
@@ -207,7 +208,7 @@ private val initialChapters = listOf(
         isUnlocked = false,
     ),
     ChapterProgressEntity(
-        chapterId = 6,
+        chapterId = ChapterIds.MASS_EXTINCTION,
         chapterOrder = 6,
         title = "Mass Extinction",
         subtitle = "The end of the dinosaur age",
@@ -215,7 +216,7 @@ private val initialChapters = listOf(
         isUnlocked = false,
     ),
     ChapterProgressEntity(
-        chapterId = 7,
+        chapterId = ChapterIds.MODERN_BIRDS,
         chapterOrder = 7,
         title = "Dinosaurs and Modern Birds",
         subtitle = "The dinosaurs that survived",

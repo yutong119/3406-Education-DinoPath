@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
+import com.example.dinopath.domain.model.ChapterIds
 import com.example.dinopath.domain.repository.LearningProgressRepository
 import kotlinx.coroutines.launch
 
@@ -132,7 +133,7 @@ class KnowledgeCheckViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 learningProgressRepository.saveQuizCompletion(
-                    chapterId = 3,
+                    chapterId = ChapterIds.JURASSIC_PERIOD,
                     questions = currentState.questions,
                     answers = currentState.submittedAnswers,
                     score = currentState.score,
