@@ -1,51 +1,73 @@
 package com.example.dinopath.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Pets
+import androidx.compose.material.icons.outlined.RadioButtonChecked
+import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.material.icons.outlined.Schedule
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material.icons.automirrored.outlined.ArrowForward
-import androidx.compose.material3.Button
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Pets
-import androidx.compose.material3.AssistChip
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material.icons.outlined.RadioButtonChecked
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.dinopath.domain.model.ChapterProgress
+import com.example.dinopath.domain.model.ChapterStatus
+import com.example.dinopath.ui.home.HomeUiState
+import com.example.dinopath.ui.home.HomeViewModel
 import com.example.dinopath.ui.theme.DinoPathTheme
 
 @Composable
 fun HomeScreen(
+    viewModel: HomeViewModel,
+    onContinueExpedition: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    HomeContent(
+        uiState = uiState,
+        onContinueExpedition = onContinueExpedition,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun HomeContent(
+    uiState: HomeUiState,
     onContinueExpedition: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -65,7 +87,7 @@ fun HomeScreen(
     ) {
         item {
             HomeHeader(
-                totalStars = 0,
+                totalStars = uiState.totalStars,
             )
         }
 
@@ -79,8 +101,16 @@ fun HomeScreen(
             FeaturedSpecimenCard()
         }
 
-        item {
-            LearningJourneySection()
+        if (uiState.isLoading) {
+            item {
+                HomeLoadingState()
+            }
+        } else {
+            item {
+                LearningJourneySection(
+                    chapters = uiState.chapters,
+                )
+            }
         }
     }
 }
@@ -101,6 +131,9 @@ private fun HomeHeader(
         ) {
             Text(
                 text = "DinoPath",
+                modifier = Modifier.semantics {
+                    heading()
+                },
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
@@ -110,9 +143,6 @@ private fun HomeHeader(
                 text = "Your Prehistoric Journey",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.semantics {
-                    heading()
-                },
             )
         }
 
@@ -221,7 +251,8 @@ private fun DailyExpeditionCard(
                 Spacer(modifier = Modifier.weight(1f))
 
                 Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                    imageVector =
+                        Icons.AutoMirrored.Outlined.ArrowForward,
                     contentDescription = null,
                 )
             }
@@ -257,7 +288,8 @@ private fun FeaturedSpecimenCard(
 
                 Icon(
                     imageVector = Icons.Outlined.FavoriteBorder,
-                    contentDescription = "Add Stegosaurus to collection",
+                    contentDescription =
+                        "Add Stegosaurus to collection",
                     tint = MaterialTheme.colorScheme.primary,
                 )
             }
@@ -267,14 +299,16 @@ private fun FeaturedSpecimenCard(
                     .fillMaxWidth()
                     .height(140.dp)
                     .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        color =
+                            MaterialTheme.colorScheme.surfaceVariant,
                         shape = RoundedCornerShape(16.dp),
                     ),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Pets,
-                    contentDescription = "Stegosaurus image placeholder",
+                    contentDescription =
+                        "Stegosaurus image placeholder",
                     modifier = Modifier.size(56.dp),
                     tint = MaterialTheme.colorScheme.primary,
                 )
@@ -288,7 +322,9 @@ private fun FeaturedSpecimenCard(
             )
 
             Text(
-                text = "One of the most recognisable dinosaurs, known for its large back plates and spiked tail.",
+                text =
+                    "One of the most recognisable dinosaurs, " +
+                            "known for its large back plates and spiked tail.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -315,7 +351,36 @@ private fun FeaturedSpecimenCard(
 }
 
 @Composable
+private fun HomeLoadingState(
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            CircularProgressIndicator()
+
+            Text(
+                text = "Loading your learning journey…",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
 private fun LearningJourneySection(
+    chapters: List<ChapterProgress>,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -342,17 +407,27 @@ private fun LearningJourneySection(
                 containerColor = MaterialTheme.colorScheme.surface,
             ),
         ) {
-            Column(
-                modifier = Modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = 12.dp,
-                ),
-            ) {
-                journeyChapters.forEachIndexed { index, chapter ->
-                    JourneyChapterRow(
-                        chapter = chapter,
-                        showConnector = index < journeyChapters.lastIndex,
-                    )
+            if (chapters.isEmpty()) {
+                Text(
+                    text = "No learning chapters are available.",
+                    modifier = Modifier.padding(20.dp),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            } else {
+                Column(
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 12.dp,
+                    ),
+                ) {
+                    chapters.forEachIndexed { index, chapter ->
+                        JourneyChapterRow(
+                            chapter = chapter,
+                            showConnector =
+                                index < chapters.lastIndex,
+                        )
+                    }
                 }
             }
         }
@@ -361,26 +436,41 @@ private fun LearningJourneySection(
 
 @Composable
 private fun JourneyChapterRow(
-    chapter: JourneyChapter,
+    chapter: ChapterProgress,
     showConnector: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val icon = when (chapter.status) {
-        ChapterStatus.COMPLETED -> Icons.Outlined.Check
-        ChapterStatus.CURRENT -> Icons.Outlined.RadioButtonChecked
-        ChapterStatus.LOCKED -> Icons.Outlined.Lock
+        ChapterStatus.COMPLETED ->
+            Icons.Outlined.Check
+
+        ChapterStatus.IN_PROGRESS ->
+            Icons.Outlined.RadioButtonChecked
+
+        ChapterStatus.LOCKED ->
+            Icons.Outlined.Lock
     }
 
     val statusText = when (chapter.status) {
-        ChapterStatus.COMPLETED -> "Completed"
-        ChapterStatus.CURRENT -> "Current expedition"
-        ChapterStatus.LOCKED -> "Locked"
+        ChapterStatus.COMPLETED ->
+            "Completed"
+
+        ChapterStatus.IN_PROGRESS ->
+            "Current expedition"
+
+        ChapterStatus.LOCKED ->
+            "Locked"
     }
 
     val statusColor = when (chapter.status) {
-        ChapterStatus.COMPLETED -> MaterialTheme.colorScheme.secondary
-        ChapterStatus.CURRENT -> MaterialTheme.colorScheme.primary
-        ChapterStatus.LOCKED -> MaterialTheme.colorScheme.onSurfaceVariant
+        ChapterStatus.COMPLETED ->
+            MaterialTheme.colorScheme.secondary
+
+        ChapterStatus.IN_PROGRESS ->
+            MaterialTheme.colorScheme.primary
+
+        ChapterStatus.LOCKED ->
+            MaterialTheme.colorScheme.onSurfaceVariant
     }
 
     Row(
@@ -404,7 +494,8 @@ private fun JourneyChapterRow(
                         .width(2.dp)
                         .height(52.dp)
                         .background(
-                            color = MaterialTheme.colorScheme.outlineVariant,
+                            color =
+                                MaterialTheme.colorScheme.outlineVariant,
                         ),
                 )
             }
@@ -420,7 +511,9 @@ private fun JourneyChapterRow(
                 text = chapter.title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = if (chapter.status == ChapterStatus.LOCKED) {
+                color = if (
+                    chapter.status == ChapterStatus.LOCKED
+                ) {
                     MaterialTheme.colorScheme.onSurfaceVariant
                 } else {
                     MaterialTheme.colorScheme.onSurface
@@ -442,8 +535,11 @@ private fun JourneyChapterRow(
 
             if (chapter.status == ChapterStatus.COMPLETED) {
                 Text(
-                    text = "★".repeat(chapter.stars) +
-                            "☆".repeat(3 - chapter.stars),
+                    text =
+                        "★".repeat(chapter.stars.coerceIn(0, 3)) +
+                                "☆".repeat(
+                                    3 - chapter.stars.coerceIn(0, 3),
+                                ),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -452,59 +548,6 @@ private fun JourneyChapterRow(
     }
 }
 
-private enum class ChapterStatus {
-    COMPLETED,
-    CURRENT,
-    LOCKED,
-}
-
-private data class JourneyChapter(
-    val title: String,
-    val subtitle: String,
-    val status: ChapterStatus,
-    val stars: Int = 0,
-)
-
-private val journeyChapters = listOf(
-    JourneyChapter(
-        title = "Meet the Dinosaurs",
-        subtitle = "Introduction to prehistoric life",
-        status = ChapterStatus.COMPLETED,
-        stars = 3,
-    ),
-    JourneyChapter(
-        title = "Triassic Period",
-        subtitle = "The first dinosaurs emerge",
-        status = ChapterStatus.COMPLETED,
-        stars = 2,
-    ),
-    JourneyChapter(
-        title = "Jurassic Period",
-        subtitle = "Giants dominate the Earth",
-        status = ChapterStatus.CURRENT,
-    ),
-    JourneyChapter(
-        title = "Cretaceous Period",
-        subtitle = "A changing prehistoric world",
-        status = ChapterStatus.LOCKED,
-    ),
-    JourneyChapter(
-        title = "Dinosaur Habitats and Diets",
-        subtitle = "How dinosaurs lived and ate",
-        status = ChapterStatus.LOCKED,
-    ),
-    JourneyChapter(
-        title = "Mass Extinction",
-        subtitle = "The end of the dinosaur age",
-        status = ChapterStatus.LOCKED,
-    ),
-    JourneyChapter(
-        title = "Dinosaurs and Modern Birds",
-        subtitle = "The dinosaurs that survived",
-        status = ChapterStatus.LOCKED,
-    ),
-)
-
 @Preview(
     showBackground = true,
     showSystemUi = true,
@@ -512,8 +555,63 @@ private val journeyChapters = listOf(
 @Composable
 private fun HomeScreenPreview() {
     DinoPathTheme {
-        HomeScreen(
+        HomeContent(
+            uiState = HomeUiState(
+                chapters = previewChapters,
+                isLoading = false,
+            ),
             onContinueExpedition = {},
         )
     }
 }
+
+private val previewChapters = listOf(
+    ChapterProgress(
+        chapterId = 1,
+        chapterOrder = 1,
+        title = "Meet the Dinosaurs",
+        subtitle = "Introduction to prehistoric life",
+        status = ChapterStatus.COMPLETED,
+        isUnlocked = true,
+        stars = 3,
+        bestScore = 3,
+        totalQuestions = 3,
+        bestAccuracy = 100,
+    ),
+    ChapterProgress(
+        chapterId = 2,
+        chapterOrder = 2,
+        title = "Triassic Period",
+        subtitle = "The first dinosaurs emerge",
+        status = ChapterStatus.COMPLETED,
+        isUnlocked = true,
+        stars = 2,
+        bestScore = 2,
+        totalQuestions = 3,
+        bestAccuracy = 66,
+    ),
+    ChapterProgress(
+        chapterId = 3,
+        chapterOrder = 3,
+        title = "Jurassic Period",
+        subtitle = "Giants dominate the Earth",
+        status = ChapterStatus.IN_PROGRESS,
+        isUnlocked = true,
+        stars = 0,
+        bestScore = 0,
+        totalQuestions = 0,
+        bestAccuracy = 0,
+    ),
+    ChapterProgress(
+        chapterId = 4,
+        chapterOrder = 4,
+        title = "Cretaceous Period",
+        subtitle = "A changing prehistoric world",
+        status = ChapterStatus.LOCKED,
+        isUnlocked = false,
+        stars = 0,
+        bestScore = 0,
+        totalQuestions = 0,
+        bestAccuracy = 0,
+    ),
+)

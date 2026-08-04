@@ -14,6 +14,7 @@ import com.example.dinopath.ui.screens.SettingsScreen
 import com.example.dinopath.ui.screens.WelcomeScreen
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.dinopath.ui.knowledge.KnowledgeCheckViewModel
+import com.example.dinopath.ui.home.HomeViewModel
 
 @Composable
 fun DinoNavHost(
@@ -45,7 +46,10 @@ fun DinoNavHost(
          * Home must be registered exactly once.
          */
         composable(DinoDestination.HOME.route) {
+            val viewModel: HomeViewModel = hiltViewModel()
+
             HomeScreen(
+                viewModel = viewModel,
                 onContinueExpedition = {
                     navController.navigate(
                         DinoDestination.EXHIBITION.route,
