@@ -1,6 +1,6 @@
-package com.example.dinopath.di
+package com.example.dinopath.data.repository
 
-import com.example.dinopath.data.repository.StaticQuizRepository
+import com.example.dinopath.domain.repository.LearningProgressRepository
 import com.example.dinopath.domain.repository.QuizRepository
 import dagger.Binds
 import dagger.Module
@@ -17,4 +17,10 @@ abstract class RepositoryModule {
     abstract fun bindQuizRepository(
         implementation: StaticQuizRepository,
     ): QuizRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindLearningProgressRepository(
+        implementation: LocalLearningProgressRepository,
+    ): LearningProgressRepository
 }
