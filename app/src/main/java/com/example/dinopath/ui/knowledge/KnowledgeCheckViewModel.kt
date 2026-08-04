@@ -59,6 +59,9 @@ class KnowledgeCheckViewModel @Inject constructor(
             currentState.copy(
                 hasSubmitted = true,
                 score = updatedScore,
+                submittedAnswers =
+                    currentState.submittedAnswers +
+                            (question.id to selectedAnswer),
             )
         }
     }

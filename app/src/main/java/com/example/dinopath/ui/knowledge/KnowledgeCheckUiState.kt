@@ -1,6 +1,8 @@
 package com.example.dinopath.ui.knowledge
 
 import com.example.dinopath.domain.model.QuizQuestion
+import com.example.dinopath.domain.scoring.calculateAccuracy
+import com.example.dinopath.domain.scoring.calculateStars
 
 data class KnowledgeCheckUiState(
     val questions: List<QuizQuestion> = emptyList(),
@@ -9,6 +11,11 @@ data class KnowledgeCheckUiState(
     val hasSubmitted: Boolean = false,
     val score: Int = 0,
     val isComplete: Boolean = false,
+    val submittedAnswers: Map<Int, String> = emptyMap(),
+    val earnedStars: Int = 0,
+    val savedAccuracy: Int = 0,
+    val isSaving: Boolean = false,
+    val saveError: String? = null,
 ) {
     val currentQuestion: QuizQuestion?
         get() = questions.getOrNull(currentQuestionIndex)
@@ -23,23 +30,14 @@ data class KnowledgeCheckUiState(
         get() = currentQuestionIndex == questions.lastIndex
 
     val stars: Int
-        get() = when {
-            questions.isEmpty() -> 0
-            score == questions.size -> 3
-            score == questions.size - 1 -> 2
-            else -> 1
-        }
+        get() = calculateStars(
+            score = score,
+            totalQuestions = totalQuestions,
+        )
 
     val accuracy: Int
-        get() {
-            if (questions.isEmpty()) {
-                return 0
-            }
-
-            return (
-                    score.toFloat() /
-                            questions.size.toFloat() *
-                            100
-                    ).toInt()
-        }
+        get() = calculateAccuracy(
+            score = score,
+            totalQuestions = totalQuestions,
+        )
 }
