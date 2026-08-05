@@ -229,6 +229,9 @@ private fun RecentActivitySection(
     ) {
         Text(
             text = "RECENT ACTIVITY",
+            modifier = Modifier.semantics {
+                heading()
+            },
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,

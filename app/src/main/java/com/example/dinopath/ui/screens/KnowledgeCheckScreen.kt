@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.dinopath.ui.theme.DinoPathTheme
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import com.example.dinopath.domain.model.QuizQuestion
 import androidx.compose.runtime.collectAsState
@@ -213,6 +214,9 @@ private fun KnowledgeCheckHeader(
             Column {
                 Text(
                     text = "Knowledge Check",
+                    modifier = Modifier.semantics {
+                        heading()
+                    },
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
