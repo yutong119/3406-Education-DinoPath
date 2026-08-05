@@ -22,3 +22,22 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
         )
     }
 }
+
+val MIGRATION_2_3 = object : Migration(2, 3) {
+
+    override fun migrate(
+        database: SupportSQLiteDatabase,
+    ) {
+        database.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS specimen_cache (
+                queryTitle TEXT NOT NULL PRIMARY KEY,
+                displayTitle TEXT NOT NULL,
+                summary TEXT NOT NULL,
+                imageUrl TEXT,
+                cachedAt INTEGER NOT NULL
+            )
+            """.trimIndent(),
+        )
+    }
+}

@@ -10,6 +10,7 @@ import com.example.dinopath.data.local.entity.FavouriteSpecimenEntity
 import com.example.dinopath.data.local.entity.MistakeEntity
 import com.example.dinopath.data.local.entity.QuizResultEntity
 import kotlinx.coroutines.flow.Flow
+import com.example.dinopath.data.local.entity.SpecimenCacheEntity
 
 @Dao
 interface DinoPathDao {
@@ -135,6 +136,32 @@ interface DinoPathDao {
     )
     suspend fun deleteFavourite(
         specimenId: String,
+    )
+
+    @Query(
+        """
+    SELECT * FROM specimen_cache
+    WHERE queryTitle = :queryTitle
+    LIMIT 1
+    """
+    )
+    suspend fun getSpecimenCache(
+        queryTitle: String,
+    ): SpecimenCacheEntity?
+
+    @Upsert
+    suspend fun upsertSpecimenCache(
+        cache: SpecimenCacheEntity,
+    )
+
+    @Query(
+        """
+    DELETE FROM specimen_cache
+    WHERE cachedAt < :expirationTime
+    """
+    )
+    suspend fun deleteExpiredSpecimenCache(
+        expirationTime: Long,
     )
 
 }

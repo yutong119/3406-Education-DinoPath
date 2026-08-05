@@ -7,6 +7,7 @@ import com.example.dinopath.data.local.entity.ChapterProgressEntity
 import com.example.dinopath.data.local.entity.FavouriteSpecimenEntity
 import com.example.dinopath.data.local.entity.MistakeEntity
 import com.example.dinopath.data.local.entity.QuizResultEntity
+import com.example.dinopath.data.local.entity.SpecimenCacheEntity
 
 @Database(
     entities = [
@@ -14,8 +15,9 @@ import com.example.dinopath.data.local.entity.QuizResultEntity
         QuizResultEntity::class,
         MistakeEntity::class,
         FavouriteSpecimenEntity::class,
+        SpecimenCacheEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 abstract class DinoPathDatabase : RoomDatabase() {
