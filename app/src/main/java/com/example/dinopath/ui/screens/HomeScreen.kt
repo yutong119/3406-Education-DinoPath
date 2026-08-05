@@ -17,7 +17,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Pets
@@ -30,6 +32,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -61,6 +64,7 @@ fun HomeScreen(
     HomeContent(
         uiState = uiState,
         onContinueExpedition = onContinueExpedition,
+        onToggleFavourite = viewModel::toggleFeaturedFavourite,
         modifier = modifier,
     )
 }
@@ -69,6 +73,7 @@ fun HomeScreen(
 private fun HomeContent(
     uiState: HomeUiState,
     onContinueExpedition: () -> Unit,
+    onToggleFavourite: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -98,7 +103,12 @@ private fun HomeContent(
         }
 
         item {
-            FeaturedSpecimenCard()
+            FeaturedSpecimenCard(
+                isFavourite = uiState.isFeaturedFavourite,
+                isUpdating = uiState.isUpdatingFavourite,
+                error = uiState.favouriteError,
+                onToggleFavourite = onToggleFavourite,
+            )
         }
 
         if (uiState.isLoading) {
@@ -262,6 +272,10 @@ private fun DailyExpeditionCard(
 
 @Composable
 private fun FeaturedSpecimenCard(
+    isFavourite: Boolean,
+    isUpdating: Boolean,
+    error: String?,
+    onToggleFavourite: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -286,12 +300,31 @@ private fun FeaturedSpecimenCard(
                     color = MaterialTheme.colorScheme.primary,
                 )
 
-                Icon(
-                    imageVector = Icons.Outlined.FavoriteBorder,
-                    contentDescription =
-                        "Add Stegosaurus to collection",
-                    tint = MaterialTheme.colorScheme.primary,
-                )
+                IconButton(
+                    onClick = onToggleFavourite,
+                    enabled = !isUpdating,
+                ) {
+                    if (isUpdating) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp,
+                        )
+                    } else {
+                        Icon(
+                            imageVector = if (isFavourite) {
+                                Icons.Filled.Favorite
+                            } else {
+                                Icons.Outlined.FavoriteBorder
+                            },
+                            contentDescription = if (isFavourite) {
+                                "Remove Stegosaurus from collection"
+                            } else {
+                                "Add Stegosaurus to collection"
+                            },
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                }
             }
 
             Box(
@@ -300,7 +333,7 @@ private fun FeaturedSpecimenCard(
                     .height(140.dp)
                     .background(
                         color =
-                            MaterialTheme.colorScheme.surfaceVariant,
+                        MaterialTheme.colorScheme.surfaceVariant,
                         shape = RoundedCornerShape(16.dp),
                     ),
                 contentAlignment = Alignment.Center,
@@ -308,10 +341,30 @@ private fun FeaturedSpecimenCard(
                 Icon(
                     imageVector = Icons.Outlined.Pets,
                     contentDescription =
-                        "Stegosaurus image placeholder",
+                    "Stegosaurus image placeholder",
                     modifier = Modifier.size(56.dp),
                     tint = MaterialTheme.colorScheme.primary,
                 )
+            }
+
+            if (error != null) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.ErrorOutline,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.error,
+                    )
+                    Text(
+                        text = error,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
             }
 
             Text(
@@ -323,8 +376,8 @@ private fun FeaturedSpecimenCard(
 
             Text(
                 text =
-                    "One of the most recognisable dinosaurs, " +
-                            "known for its large back plates and spiked tail.",
+                "One of the most recognisable dinosaurs, " +
+                        "known for its large back plates and spiked tail.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -561,6 +614,7 @@ private fun HomeScreenPreview() {
                 isLoading = false,
             ),
             onContinueExpedition = {},
+            onToggleFavourite = {},
         )
     }
 }
