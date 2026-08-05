@@ -46,7 +46,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import coil.compose.SubcomposeAsyncImage
+import com.example.dinopath.ui.theme.LocalReduceMotion
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dinopath.domain.model.ChapterProgress
 import com.example.dinopath.domain.model.ChapterStatus
@@ -185,12 +188,30 @@ private fun HomeHeader(
                 tint = MaterialTheme.colorScheme.primary,
             )
 
-            Text(
-                text = totalStars.toString(),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-            )
+            val reduceMotion = LocalReduceMotion.current
+            if (reduceMotion) {
+                Text(
+                    text = totalStars.toString(),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            } else {
+                AnimatedContent(
+                    targetState = totalStars,
+                    transitionSpec = {
+                        fadeIn(tween(300)) togetherWith fadeOut(tween(300))
+                    },
+                    label = "TotalStars"
+                ) { targetStars ->
+                    Text(
+                        text = targetStars.toString(),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
         }
     }
 }

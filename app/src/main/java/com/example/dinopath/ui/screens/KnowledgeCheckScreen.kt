@@ -2,12 +2,14 @@ package com.example.dinopath.ui.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -42,6 +44,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import com.example.dinopath.domain.model.QuizQuestion
 import androidx.compose.runtime.collectAsState
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.delay
+import com.example.dinopath.ui.theme.LocalReduceMotion
 import com.example.dinopath.ui.knowledge.KnowledgeCheckUiState
 import com.example.dinopath.ui.knowledge.KnowledgeCheckViewModel
 
@@ -144,11 +151,18 @@ private fun KnowledgeCheckContent(
             }
         } else {
             item {
-                AnswerFeedbackCard(
-                    question = question,
-                    selectedAnswer =
-                        uiState.selectedAnswer.orEmpty(),
-                )
+                val reduceMotion = LocalReduceMotion.current
+                AnimatedVisibility(
+                    visible = true,
+                    enter = if (reduceMotion) EnterTransition.None 
+                            else expandVertically() + fadeIn(),
+                ) {
+                    AnswerFeedbackCard(
+                        question = question,
+                        selectedAnswer =
+                            uiState.selectedAnswer.orEmpty(),
+                    )
+                }
             }
 
             item {
@@ -435,11 +449,38 @@ private fun QuizResultScreen(
         }
 
         item {
-            Text(
-                text = "★".repeat(earnedStars) + "☆".repeat(3 - earnedStars),
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.primary,
-            )
+            val reduceMotion = LocalReduceMotion.current
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                repeat(3) { index ->
+                    var visible by remember { mutableStateOf(reduceMotion) }
+                    LaunchedEffect(Unit) {
+                        if (!reduceMotion) {
+                            delay(index * 200L)
+                            visible = true
+                        }
+                    }
+                    val isEarned = index < earnedStars
+                    
+                    if (visible) {
+                        Icon(
+                            imageVector = Icons.Outlined.Star,
+                            contentDescription = null,
+                            tint = if (isEarned) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.outlineVariant
+                            },
+                            modifier = Modifier.size(48.dp)
+                        )
+                    } else {
+                        Box(modifier = Modifier.size(48.dp))
+                    }
+                }
+            }
         }
 
         item {

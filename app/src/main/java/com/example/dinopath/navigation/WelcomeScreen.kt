@@ -18,12 +18,28 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.animation.core.*
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.scale
+import com.example.dinopath.ui.theme.LocalReduceMotion
 
 @Composable
 fun WelcomeScreen(
     onEnterMuseum: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val reduceMotion = LocalReduceMotion.current
+    val infiniteTransition = rememberInfiniteTransition(label = "WelcomeButton")
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = if (reduceMotion) 1f else 1.03f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = LinearOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "ButtonScale"
+    )
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -66,6 +82,7 @@ fun WelcomeScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
+                .scale(scale)
                 .semantics {
                     contentDescription = "Enter the DinoPath museum"
                 },
