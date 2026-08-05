@@ -10,6 +10,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import com.example.dinopath.data.local.MIGRATION_1_2
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -24,7 +25,9 @@ object DatabaseModule {
             context,
             DinoPathDatabase::class.java,
             "dinopath_database",
-        ).build()
+        )
+            .addMigrations(MIGRATION_1_2)
+            .build()
     }
 
     @Provides

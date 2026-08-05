@@ -6,6 +6,7 @@ import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
 import com.example.dinopath.data.local.entity.ChapterProgressEntity
+import com.example.dinopath.data.local.entity.FavouriteSpecimenEntity
 import com.example.dinopath.data.local.entity.MistakeEntity
 import com.example.dinopath.data.local.entity.QuizResultEntity
 import kotlinx.coroutines.flow.Flow
@@ -97,5 +98,29 @@ interface DinoPathDao {
         chapterId: Int,
         questionId: Int,
         updatedAt: Long = System.currentTimeMillis(),
+    )
+
+    @Query(
+        """
+    SELECT * FROM favourite_specimens
+    ORDER BY savedAt DESC
+    """
+    )
+    fun observeFavouriteSpecimens():
+            Flow<List<FavouriteSpecimenEntity>>
+
+    @Upsert
+    suspend fun upsertFavourite(
+        specimen: FavouriteSpecimenEntity,
+    )
+
+    @Query(
+        """
+    DELETE FROM favourite_specimens
+    WHERE specimenId = :specimenId
+    """
+    )
+    suspend fun deleteFavourite(
+        specimenId: String,
     )
 }
