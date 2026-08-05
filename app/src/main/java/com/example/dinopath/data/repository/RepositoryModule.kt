@@ -10,6 +10,7 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import com.example.dinopath.data.preferences.DataStoreUserPreferencesRepository
 import com.example.dinopath.domain.repository.UserPreferencesRepository
+import com.example.dinopath.domain.repository.SpecimenRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -39,5 +40,11 @@ abstract class RepositoryModule {
         implementation:
         DataStoreUserPreferencesRepository,
     ): UserPreferencesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSpecimenRepository(
+        implementation: CachedSpecimenRepository,
+    ): SpecimenRepository
 
 }

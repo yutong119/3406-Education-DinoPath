@@ -8,6 +8,8 @@ import com.example.dinopath.domain.model.QuizHistory
 import com.example.dinopath.domain.model.QuizQuestion
 import com.example.dinopath.domain.repository.CollectionRepository
 import com.example.dinopath.domain.repository.LearningProgressRepository
+import com.example.dinopath.domain.repository.SpecimenRepository
+import com.example.dinopath.domain.model.SpecimenDetails
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -36,16 +38,19 @@ class HomeViewModelTest {
     private lateinit var viewModel: HomeViewModel
     private lateinit var learningRepository: FakeLearningProgressRepository
     private lateinit var collectionRepository: FakeCollectionRepository
+    private lateinit var specimenRepository: FakeSpecimenRepository
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         learningRepository = FakeLearningProgressRepository()
         collectionRepository = FakeCollectionRepository()
+        specimenRepository = FakeSpecimenRepository()
 
         viewModel = HomeViewModel(
             learningRepository = learningRepository,
             collectionRepository = collectionRepository,
+            specimenRepository = specimenRepository,
         )
     }
 
@@ -96,6 +101,7 @@ class HomeViewModelTest {
         viewModel = HomeViewModel(
             learningRepository = learningRepository,
             collectionRepository = failingRepo,
+            specimenRepository = specimenRepository,
         )
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
 
@@ -135,5 +141,13 @@ private open class FakeCollectionRepository : CollectionRepository {
 
     override suspend fun removeFavourite(specimenId: String) {
         favouritesFlow.update { it.filterNot { item -> item.id == specimenId } }
+    }
+}
+
+private open class FakeSpecimenRepository : SpecimenRepository {
+    override suspend fun getSpecimenDetails(queryTitle: String, forceRefresh: Boolean): Result<SpecimenDetails> {
+        return Result.success(
+            SpecimenDetails(queryTitle, queryTitle, "Summary", null, false)
+        )
     }
 }
