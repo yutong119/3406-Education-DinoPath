@@ -34,6 +34,7 @@ import com.example.dinopath.ui.journal.JournalUiState
 import com.example.dinopath.ui.journal.JournalViewModel
 import java.text.DateFormat
 import java.util.Date
+import com.example.dinopath.ui.journal.EvolutionMapSection
 
 @Composable
 fun JournalScreen(
@@ -83,6 +84,12 @@ private fun JournalContent(
             item {
                 StatisticsGrid(
                     uiState = uiState,
+                )
+            }
+
+            item {
+                EvolutionMapSection(
+                    chapters = uiState.chapters,
                 )
             }
 
@@ -144,6 +151,8 @@ private fun StatisticsGrid(
         }
     }
 }
+
+
 
 @Composable
 private fun JournalStatCard(
