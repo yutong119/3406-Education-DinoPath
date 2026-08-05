@@ -11,6 +11,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import com.example.dinopath.data.local.MIGRATION_1_2
 
 @Module
 @InstallIn(SingletonComponent::class)

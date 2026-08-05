@@ -136,4 +136,28 @@ interface DinoPathDao {
     suspend fun deleteFavourite(
         specimenId: String,
     )
+
+    @Query(
+        """
+    SELECT * FROM favourite_specimens
+    ORDER BY savedAt DESC
+    """
+    )
+    fun observeFavouriteSpecimens():
+            Flow<List<FavouriteSpecimenEntity>>
+
+    @Upsert
+    suspend fun upsertFavourite(
+        specimen: FavouriteSpecimenEntity,
+    )
+
+    @Query(
+        """
+    DELETE FROM favourite_specimens
+    WHERE specimenId = :specimenId
+    """
+    )
+    suspend fun deleteFavourite(
+        specimenId: String,
+    )
 }
