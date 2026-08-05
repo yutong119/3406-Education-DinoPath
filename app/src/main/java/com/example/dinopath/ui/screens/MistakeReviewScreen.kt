@@ -33,6 +33,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dinopath.domain.model.MistakeSummary
+import com.example.dinopath.ui.components.EmptyStateCard
+import com.example.dinopath.ui.components.ErrorStateCard
+import com.example.dinopath.ui.components.LoadingStateCard
 import com.example.dinopath.ui.mistakes.MistakeReviewUiState
 import com.example.dinopath.ui.mistakes.MistakeReviewViewModel
 
@@ -80,12 +83,14 @@ private fun MistakeReviewContent(
 
         if (uiState.isLoading) {
             item {
-                MistakeLoadingCard()
+                LoadingStateCard(
+                    message = "Loading mistakes…",
+                )
             }
         } else {
             uiState.errorMessage?.let { errorMessage ->
                 item {
-                    MistakeErrorCard(
+                    ErrorStateCard(
                         message = errorMessage,
                     )
                 }
@@ -93,7 +98,11 @@ private fun MistakeReviewContent(
 
             if (uiState.mistakes.isEmpty()) {
                 item {
-                    EmptyMistakesCard()
+                    EmptyStateCard(
+                        title = "No mistakes to review",
+                        message = "Great work! Complete more knowledge checks to keep building your journal.",
+                        icon = Icons.Outlined.CheckCircle,
+                    )
                 }
             } else {
                 items(
@@ -327,105 +336,6 @@ private fun AnswerSection(
                         MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun EmptyMistakesCard(
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.CheckCircle,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-
-            Text(
-                text = "No mistakes to review",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-            )
-
-            Text(
-                text =
-                    "Great work! Complete more knowledge checks " +
-                            "to keep building your journal.",
-                style = MaterialTheme.typography.bodyMedium,
-                color =
-                    MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-}
-
-@Composable
-private fun MistakeLoadingCard(
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            CircularProgressIndicator()
-
-            Text(
-                text = "Loading mistakes…",
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
-}
-
-@Composable
-private fun MistakeErrorCard(
-    message: String,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor =
-                MaterialTheme.colorScheme.errorContainer,
-        ),
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.ErrorOutline,
-                contentDescription = null,
-                tint =
-                    MaterialTheme.colorScheme.onErrorContainer,
-            )
-
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodyMedium,
-                color =
-                    MaterialTheme.colorScheme.onErrorContainer,
-            )
         }
     }
 }

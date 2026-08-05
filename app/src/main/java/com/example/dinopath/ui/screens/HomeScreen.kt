@@ -51,6 +51,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dinopath.domain.model.ChapterProgress
 import com.example.dinopath.domain.model.ChapterStatus
 import com.example.dinopath.domain.model.SpecimenDetails
+import com.example.dinopath.ui.components.ErrorStateCard
+import com.example.dinopath.ui.components.LoadingStateCard
 import com.example.dinopath.ui.home.HomeUiState
 import com.example.dinopath.ui.home.HomeViewModel
 import com.example.dinopath.ui.theme.DinoPathTheme
@@ -123,7 +125,9 @@ private fun HomeContent(
 
         if (uiState.isLoading) {
             item {
-                HomeLoadingState()
+                LoadingStateCard(
+                    message = "Loading your learning journey…",
+                )
             }
         } else {
             item {
@@ -342,56 +346,16 @@ private fun FeaturedSpecimenCard(
             }
 
             if (isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(140.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        CircularProgressIndicator(modifier = Modifier.size(32.dp))
-                        Text(
-                            text = "Loading specimen…",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
+                LoadingStateCard(
+                    message = "Loading specimen…",
+                    modifier = Modifier.height(160.dp),
+                )
             } else if (error != null) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.ErrorOutline,
-                        contentDescription = null,
-                        modifier = Modifier.size(32.dp),
-                        tint = MaterialTheme.colorScheme.error,
-                    )
-                    Text(
-                        text = "Unable to load specimen",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                    Text(
-                        text = error,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Button(
-                        onClick = onRetry,
-                        modifier = Modifier.padding(top = 4.dp),
-                    ) {
-                        Text("RETRY")
-                    }
-                }
+                ErrorStateCard(
+                    title = "Unable to load specimen",
+                    message = error,
+                    onRetry = onRetry,
+                )
             } else if (specimen != null) {
                 Box(
                     modifier = Modifier
@@ -478,34 +442,6 @@ private fun FeaturedSpecimenCard(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun HomeLoadingState(
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            CircularProgressIndicator()
-
-            Text(
-                text = "Loading your learning journey…",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
         }
     }
 }

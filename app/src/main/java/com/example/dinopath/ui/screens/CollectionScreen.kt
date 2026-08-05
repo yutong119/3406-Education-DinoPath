@@ -41,6 +41,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dinopath.domain.model.DinosaurSpecimen
+import com.example.dinopath.ui.components.EmptyStateCard
+import com.example.dinopath.ui.components.ErrorStateCard
+import com.example.dinopath.ui.components.LoadingStateCard
 import com.example.dinopath.ui.collection.CollectionUiState
 import com.example.dinopath.ui.collection.CollectionViewModel
 import com.example.dinopath.ui.theme.DinoPathTheme
@@ -75,11 +78,22 @@ private fun CollectionContent(
         )
 
         if (uiState.isLoading) {
-            CollectionLoadingState()
+            LoadingStateCard(
+                message = "Loading museum collection…",
+                modifier = Modifier.padding(20.dp),
+            )
         } else if (uiState.errorMessage != null) {
-            CollectionErrorState(message = uiState.errorMessage)
+            ErrorStateCard(
+                message = uiState.errorMessage,
+                modifier = Modifier.padding(20.dp),
+            )
         } else if (uiState.favourites.isEmpty()) {
-            CollectionEmptyState()
+            EmptyStateCard(
+                title = "No specimens collected yet",
+                message = "Explore the museum and add dinosaurs to your personal collection.",
+                icon = Icons.Outlined.Pets,
+                modifier = Modifier.padding(20.dp),
+            )
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -243,86 +257,6 @@ private fun FavouriteSpecimenCard(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun CollectionLoadingState(
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
-private fun CollectionEmptyState(
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(40.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.Pets,
-            contentDescription = null,
-            modifier = Modifier.size(80.dp),
-            tint = MaterialTheme.colorScheme.outlineVariant,
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "No specimens collected yet",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.outline,
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "Explore the museum and add dinosaurs to your personal collection.",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-        )
-    }
-}
-
-@Composable
-private fun CollectionErrorState(
-    message: String,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.ErrorOutline,
-            contentDescription = null,
-            modifier = Modifier.size(48.dp),
-            tint = MaterialTheme.colorScheme.error,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.error,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-        )
     }
 }
 

@@ -31,6 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dinopath.domain.model.QuizHistory
+import com.example.dinopath.ui.components.EmptyStateCard
+import com.example.dinopath.ui.components.LoadingStateCard
 import com.example.dinopath.ui.journal.JournalUiState
 import com.example.dinopath.ui.journal.JournalViewModel
 import java.text.DateFormat
@@ -83,7 +85,9 @@ private fun JournalContent(
 
         if (uiState.isLoading) {
             item {
-                LoadingJournalCard()
+                LoadingStateCard(
+                    message = "Loading explorer statistics…",
+                )
             }
         } else {
             item {
@@ -231,17 +235,11 @@ private fun RecentActivitySection(
         )
 
         if (activities.isEmpty()) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(
-                    text =
-                        "Complete a knowledge check to begin your journal.",
-                    modifier = Modifier.padding(20.dp),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            EmptyStateCard(
+                title = "No recent activity",
+                message = "Complete a knowledge check to begin your journal.",
+                icon = Icons.Outlined.History,
+            )
         } else {
             activities.forEach { activity ->
                 RecentActivityCard(
@@ -320,26 +318,4 @@ private fun RecentActivityCard(
     }
 }
 
-@Composable
-private fun LoadingJournalCard(
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            CircularProgressIndicator()
 
-            Text(
-                text = "Loading explorer statistics…",
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
-}
