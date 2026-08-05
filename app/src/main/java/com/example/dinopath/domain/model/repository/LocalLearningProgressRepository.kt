@@ -68,6 +68,7 @@ class LocalLearningProgressRepository @Inject constructor(
         dao.markMistakeMastered(
             chapterId = chapterId,
             questionId = questionId,
+            updatedAt = System.currentTimeMillis(),
         )
     }
 

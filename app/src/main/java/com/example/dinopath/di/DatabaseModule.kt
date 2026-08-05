@@ -3,6 +3,7 @@ package com.example.dinopath.di
 import android.content.Context
 import androidx.room.Room
 import com.example.dinopath.data.local.DinoPathDatabase
+import com.example.dinopath.data.local.MIGRATION_1_2
 import com.example.dinopath.data.local.dao.DinoPathDao
 import dagger.Module
 import dagger.Provides
@@ -24,7 +25,9 @@ object DatabaseModule {
             context,
             DinoPathDatabase::class.java,
             "dinopath_database",
-        ).build()
+        )
+            .addMigrations(MIGRATION_1_2)
+            .build()
     }
 
     @Provides
