@@ -63,20 +63,20 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
-
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
-
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
-
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
-
     implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.kotlinx.coroutines.test)
-
     implementation(libs.androidx.datastore.preferences,)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.moshi)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+    ksp(libs.moshi.codegen)
 }
 
 kapt {
