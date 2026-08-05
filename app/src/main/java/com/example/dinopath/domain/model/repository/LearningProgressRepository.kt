@@ -23,4 +23,9 @@ interface LearningProgressRepository {
         answers: Map<Int, String>,
         score: Int,
     ): QuizCompletion
+
+    suspend fun markMistakeMastered(
+        chapterId: Int,
+        questionId: Int,
+    )
 }

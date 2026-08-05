@@ -16,6 +16,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.dinopath.ui.knowledge.KnowledgeCheckViewModel
 import com.example.dinopath.ui.home.HomeViewModel
 import com.example.dinopath.ui.journal.JournalViewModel
+import com.example.dinopath.ui.mistakes.MistakeReviewViewModel
+import com.example.dinopath.ui.screens.MistakeReviewScreen
 
 @Composable
 fun DinoNavHost(
@@ -98,6 +100,25 @@ fun DinoNavHost(
 
             JournalScreen(
                 viewModel = viewModel,
+                onReviewMistakes = {
+                    navController.navigate(
+                        AppRoutes.MISTAKE_REVIEW,
+                    ) {
+                        launchSingleTop = true
+                    }
+                },
+            )
+        }
+
+        composable(AppRoutes.MISTAKE_REVIEW) {
+            val viewModel: MistakeReviewViewModel =
+                hiltViewModel()
+
+            MistakeReviewScreen(
+                viewModel = viewModel,
+                onBack = {
+                    navController.popBackStack()
+                },
             )
         }
 

@@ -2,7 +2,6 @@ package com.example.dinopath.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
@@ -84,4 +83,19 @@ interface DinoPathDao {
         """
     )
     fun observeQuizResults(): Flow<List<QuizResultEntity>>
+
+    @Query(
+        """
+        UPDATE mistakes
+        SET isMastered = 1,
+            updatedAt = :updatedAt
+        WHERE chapterId = :chapterId
+        AND questionId = :questionId
+        """
+    )
+    suspend fun markMistakeMastered(
+        chapterId: Int,
+        questionId: Int,
+        updatedAt: Long = System.currentTimeMillis(),
+    )
 }

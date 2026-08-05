@@ -61,6 +61,16 @@ class LocalLearningProgressRepository @Inject constructor(
         dao.upsertChapters(initialChapters)
     }
 
+    override suspend fun markMistakeMastered(
+        chapterId: Int,
+        questionId: Int,
+    ) {
+        dao.markMistakeMastered(
+            chapterId = chapterId,
+            questionId = questionId,
+        )
+    }
+
     override suspend fun saveQuizCompletion(
         chapterId: Int,
         questions: List<QuizQuestion>,

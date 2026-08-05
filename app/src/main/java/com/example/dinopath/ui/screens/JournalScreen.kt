@@ -20,6 +20,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -39,19 +40,23 @@ import com.example.dinopath.ui.journal.EvolutionMapSection
 @Composable
 fun JournalScreen(
     viewModel: JournalViewModel,
+    onReviewMistakes: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     JournalContent(
         uiState = uiState,
+        onReviewMistakes = onReviewMistakes,
         modifier = modifier,
     )
 }
 
+
 @Composable
 private fun JournalContent(
     uiState: JournalUiState,
+    onReviewMistakes: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -85,6 +90,21 @@ private fun JournalContent(
                 StatisticsGrid(
                     uiState = uiState,
                 )
+            }
+
+            item {
+                Button(
+                    onClick = onReviewMistakes,
+                    enabled = uiState.mistakeCount > 0,
+                    modifier = Modifier.fillMaxWidth(),
+                    ) {
+                    Text(
+                        text =
+                            "REVIEW MISTAKES " +
+                                    "(${uiState.mistakeCount})",
+                        fontWeight = FontWeight.Bold,
+                        )
+                }
             }
 
             item {
@@ -192,6 +212,7 @@ private fun JournalStatCard(
         }
     }
 }
+
 
 @Composable
 private fun RecentActivitySection(

@@ -258,6 +258,13 @@ private open class FakeLearningProgressRepository :
         // No database seeding is required in this unit test.
     }
 
+    override suspend fun markMistakeMastered(
+        chapterId: Int,
+        questionId: Int,
+    ) {
+        // Unused in these tests
+    }
+
     override suspend fun saveQuizCompletion(
         chapterId: Int,
         questions: List<QuizQuestion>,
