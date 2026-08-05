@@ -75,6 +75,8 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.kotlinx.coroutines.test)
+
+    implementation(libs.androidx.datastore.preferences,)
 }
 
 kapt {

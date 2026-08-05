@@ -19,6 +19,7 @@ import com.example.dinopath.ui.journal.JournalViewModel
 import com.example.dinopath.ui.mistakes.MistakeReviewViewModel
 import com.example.dinopath.ui.collection.CollectionViewModel
 import com.example.dinopath.ui.screens.MistakeReviewScreen
+import com.example.dinopath.ui.settings.SettingsViewModel
 
 @Composable
 fun DinoNavHost(
@@ -129,7 +130,12 @@ fun DinoNavHost(
         }
 
         composable(DinoDestination.SETTINGS.route) {
-            SettingsScreen()
+            val viewModel: SettingsViewModel =
+                hiltViewModel()
+
+            SettingsScreen(
+                viewModel = viewModel,
+            )
         }
     }
 }
