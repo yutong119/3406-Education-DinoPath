@@ -46,9 +46,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.SubcomposeAsyncImage
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dinopath.domain.model.ChapterProgress
 import com.example.dinopath.domain.model.ChapterStatus
+import com.example.dinopath.domain.model.SpecimenDetails
 import com.example.dinopath.ui.home.HomeUiState
 import com.example.dinopath.ui.home.HomeViewModel
 import com.example.dinopath.ui.theme.DinoPathTheme
@@ -65,6 +67,9 @@ fun HomeScreen(
         uiState = uiState,
         onContinueExpedition = onContinueExpedition,
         onToggleFavourite = viewModel::toggleFeaturedFavourite,
+        onRetrySpecimen = {
+            viewModel.loadFeaturedSpecimen(forceRefresh = true)
+        },
         modifier = modifier,
     )
 }
@@ -74,6 +79,7 @@ private fun HomeContent(
     uiState: HomeUiState,
     onContinueExpedition: () -> Unit,
     onToggleFavourite: () -> Unit,
+    onRetrySpecimen: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -104,10 +110,14 @@ private fun HomeContent(
 
         item {
             FeaturedSpecimenCard(
+                specimen = uiState.specimenDetails,
+                isLoading = uiState.isSpecimenLoading,
+                error = uiState.specimenError,
                 isFavourite = uiState.isFeaturedFavourite,
                 isUpdating = uiState.isUpdatingFavourite,
-                error = uiState.favouriteError,
+                favouriteError = uiState.favouriteError,
                 onToggleFavourite = onToggleFavourite,
+                onRetry = onRetrySpecimen,
             )
         }
 
@@ -272,10 +282,14 @@ private fun DailyExpeditionCard(
 
 @Composable
 private fun FeaturedSpecimenCard(
+    specimen: SpecimenDetails?,
+    isLoading: Boolean,
+    error: String?,
     isFavourite: Boolean,
     isUpdating: Boolean,
-    error: String?,
+    favouriteError: String?,
     onToggleFavourite: () -> Unit,
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -317,9 +331,9 @@ private fun FeaturedSpecimenCard(
                                 Icons.Outlined.FavoriteBorder
                             },
                             contentDescription = if (isFavourite) {
-                                "Remove Stegosaurus from collection"
+                                "Remove from collection"
                             } else {
-                                "Add Stegosaurus to collection"
+                                "Add to collection"
                             },
                             tint = MaterialTheme.colorScheme.primary,
                         )
@@ -327,27 +341,125 @@ private fun FeaturedSpecimenCard(
                 }
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(140.dp)
-                    .background(
-                        color =
-                        MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RoundedCornerShape(16.dp),
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Pets,
-                    contentDescription =
-                    "Stegosaurus image placeholder",
-                    modifier = Modifier.size(56.dp),
-                    tint = MaterialTheme.colorScheme.primary,
+            if (isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.size(32.dp))
+                        Text(
+                            text = "Loading specimen…",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            } else if (error != null) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.ErrorOutline,
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp),
+                        tint = MaterialTheme.colorScheme.error,
+                    )
+                    Text(
+                        text = "Unable to load specimen",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                    Text(
+                        text = error,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Button(
+                        onClick = onRetry,
+                        modifier = Modifier.padding(top = 4.dp),
+                    ) {
+                        Text("RETRY")
+                    }
+                }
+            } else if (specimen != null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(160.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            shape = RoundedCornerShape(16.dp),
+                        ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    SubcomposeAsyncImage(
+                        model = specimen.imageUrl,
+                        contentDescription = "${specimen.displayTitle} specimen image",
+                        modifier = Modifier.fillMaxSize(),
+                        loading = {
+                            Box(contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                            }
+                        },
+                        error = {
+                            Icon(
+                                imageVector = Icons.Outlined.Pets,
+                                contentDescription = null,
+                                modifier = Modifier.size(56.dp),
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        },
+                    )
+                }
+
+                Text(
+                    text = specimen.displayTitle,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
+
+                Text(
+                    text = specimen.summary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Text(
+                        text = "Source: Wikipedia",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.secondary,
+                    )
+                    if (specimen.isFromCache) {
+                        Text(
+                            text = "·",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Text(
+                            text = "Offline cache",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.secondary,
+                        )
+                    }
+                }
             }
 
-            if (error != null) {
+            if (favouriteError != null) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -360,44 +472,11 @@ private fun FeaturedSpecimenCard(
                         tint = MaterialTheme.colorScheme.error,
                     )
                     Text(
-                        text = error,
+                        text = favouriteError,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
                     )
                 }
-            }
-
-            Text(
-                text = "Stegosaurus",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-
-            Text(
-                text =
-                "One of the most recognisable dinosaurs, " +
-                        "known for its large back plates and spiked tail.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                AssistChip(
-                    onClick = {},
-                    label = {
-                        Text("Late Jurassic")
-                    },
-                )
-
-                AssistChip(
-                    onClick = {},
-                    label = {
-                        Text("Herbivore")
-                    },
-                )
             }
         }
     }
@@ -612,9 +691,18 @@ private fun HomeScreenPreview() {
             uiState = HomeUiState(
                 chapters = previewChapters,
                 isLoading = false,
+                specimenDetails = SpecimenDetails(
+                    queryTitle = "Stegosaurus",
+                    displayTitle = "Stegosaurus",
+                    summary = "One of the most recognisable dinosaurs, known for its large back plates and spiked tail.",
+                    imageUrl = null,
+                    isFromCache = false,
+                ),
+                isSpecimenLoading = false,
             ),
             onContinueExpedition = {},
             onToggleFavourite = {},
+            onRetrySpecimen = {},
         )
     }
 }

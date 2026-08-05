@@ -5,12 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.dinopath.domain.model.DinosaurSpecimen
 import com.example.dinopath.domain.repository.CollectionRepository
 import com.example.dinopath.domain.repository.LearningProgressRepository
+import com.example.dinopath.domain.repository.SpecimenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,29 +20,23 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val learningRepository: LearningProgressRepository,
     private val collectionRepository: CollectionRepository,
+    private val specimenRepository: SpecimenRepository,
 ) : ViewModel() {
 
-    private val _isUpdatingFavourite = MutableStateFlow(false)
-    private val _favouriteError = MutableStateFlow<String?>(null)
-
-    init {
-        viewModelScope.launch {
-            learningRepository.ensureInitialChapters()
-        }
-    }
+    private val localState =
+        MutableStateFlow(HomeUiState())
 
     val uiState: StateFlow<HomeUiState> = combine(
         learningRepository.observeChapterProgress(),
-        collectionRepository.observeIsFavourite(STEGOSAURUS.id),
-        _isUpdatingFavourite,
-        _favouriteError
-    ) { chapters, isFavourite, isUpdating, error ->
-        HomeUiState(
+        collectionRepository.observeIsFavourite(
+            STEGOSAURUS.id,
+        ),
+        localState,
+    ) { chapters, isFavourite, local ->
+        local.copy(
             chapters = chapters,
             isLoading = false,
             isFeaturedFavourite = isFavourite,
-            isUpdatingFavourite = isUpdating,
-            favouriteError = error
         )
     }.stateIn(
         scope = viewModelScope,
@@ -48,22 +44,89 @@ class HomeViewModel @Inject constructor(
         initialValue = HomeUiState(),
     )
 
+    init {
+        viewModelScope.launch {
+            learningRepository.ensureInitialChapters()
+        }
+
+        loadFeaturedSpecimen()
+    }
+
+    fun loadFeaturedSpecimen(
+        forceRefresh: Boolean = false,
+    ) {
+        viewModelScope.launch {
+            localState.update { currentState ->
+                currentState.copy(
+                    isSpecimenLoading = true,
+                    specimenError = null,
+                )
+            }
+
+            specimenRepository
+                .getSpecimenDetails(
+                    queryTitle = STEGOSAURUS.name,
+                    forceRefresh = forceRefresh,
+                )
+                .onSuccess { details ->
+                    localState.update { currentState ->
+                        currentState.copy(
+                            specimenDetails = details,
+                            isSpecimenLoading = false,
+                            specimenError = null,
+                        )
+                    }
+                }
+                .onFailure { error ->
+                    localState.update { currentState ->
+                        currentState.copy(
+                            isSpecimenLoading = false,
+                            specimenError =
+                                error.message
+                                    ?: "Unable to load specimen information.",
+                        )
+                    }
+                }
+        }
+    }
+
     fun toggleFeaturedFavourite() {
-        if (_isUpdatingFavourite.value) return
+        if (uiState.value.isUpdatingFavourite) {
+            return
+        }
 
         viewModelScope.launch {
-            _isUpdatingFavourite.value = true
-            _favouriteError.value = null
-            try {
+            localState.update { currentState ->
+                currentState.copy(
+                    isUpdatingFavourite = true,
+                    favouriteError = null,
+                )
+            }
+
+            runCatching {
                 if (uiState.value.isFeaturedFavourite) {
-                    collectionRepository.removeFavourite(STEGOSAURUS.id)
+                    collectionRepository.removeFavourite(
+                        STEGOSAURUS.id,
+                    )
                 } else {
-                    collectionRepository.addFavourite(STEGOSAURUS)
+                    collectionRepository.addFavourite(
+                        STEGOSAURUS,
+                    )
                 }
-            } catch (e: Exception) {
-                _favouriteError.value = "Failed to update collection. Please try again."
-            } finally {
-                _isUpdatingFavourite.value = false
+            }.onSuccess {
+                localState.update { currentState ->
+                    currentState.copy(
+                        isUpdatingFavourite = false,
+                    )
+                }
+            }.onFailure {
+                localState.update { currentState ->
+                    currentState.copy(
+                        isUpdatingFavourite = false,
+                        favouriteError =
+                            "Failed to update collection. Please try again.",
+                    )
+                }
             }
         }
     }
@@ -74,7 +137,9 @@ class HomeViewModel @Inject constructor(
             name = "Stegosaurus",
             period = "Late Jurassic",
             diet = "Herbivore",
-            description = "One of the most recognisable dinosaurs, known for its large back plates and spiked tail."
+            description =
+                "One of the most recognisable dinosaurs, " +
+                        "known for its large back plates and spiked tail.",
         )
     }
 }

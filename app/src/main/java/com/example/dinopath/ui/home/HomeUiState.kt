@@ -2,6 +2,7 @@ package com.example.dinopath.ui.home
 
 import com.example.dinopath.domain.model.ChapterProgress
 import com.example.dinopath.domain.model.ChapterStatus
+import com.example.dinopath.domain.model.SpecimenDetails
 
 data class HomeUiState(
     val chapters: List<ChapterProgress> = emptyList(),
@@ -9,6 +10,9 @@ data class HomeUiState(
     val isFeaturedFavourite: Boolean = false,
     val isUpdatingFavourite: Boolean = false,
     val favouriteError: String? = null,
+    val specimenDetails: SpecimenDetails? = null,
+    val isSpecimenLoading: Boolean = true,
+    val specimenError: String? = null,
 ) {
     val totalStars: Int
         get() = chapters.sumOf { it.stars }

@@ -112,6 +112,62 @@ class HomeViewModelTest {
         assertEquals("Failed to update collection. Please try again.", state.favouriteError)
         assertFalse(state.isFeaturedFavourite)
     }
+
+    @Test
+    fun loadFeaturedSpecimen_success() = runTest {
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+
+        // Wait for init load
+        assertTrue(viewModel.uiState.value.specimenDetails != null)
+        assertFalse(viewModel.uiState.value.isSpecimenLoading)
+        assertNull(viewModel.uiState.value.specimenError)
+    }
+
+    @Test
+    fun loadFeaturedSpecimen_failure() = runTest {
+        val failingRepo = object : FakeSpecimenRepository() {
+            override suspend fun getSpecimenDetails(
+                queryTitle: String,
+                forceRefresh: Boolean
+            ): Result<SpecimenDetails> {
+                return Result.failure(Exception("Network error"))
+            }
+        }
+        viewModel = HomeViewModel(
+            learningRepository = learningRepository,
+            collectionRepository = collectionRepository,
+            specimenRepository = failingRepo,
+        )
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+
+        val state = viewModel.uiState.value
+        assertFalse(state.isSpecimenLoading)
+        assertEquals("Network error", state.specimenError)
+        assertNull(state.specimenDetails)
+    }
+
+    @Test
+    fun retryLoadSpecimen_callsRepositoryWithForceRefresh() = runTest {
+        var forceRefreshUsed = false
+        val repo = object : FakeSpecimenRepository() {
+            override suspend fun getSpecimenDetails(
+                queryTitle: String,
+                forceRefresh: Boolean
+            ): Result<SpecimenDetails> {
+                forceRefreshUsed = forceRefresh
+                return super.getSpecimenDetails(queryTitle, forceRefresh)
+            }
+        }
+        viewModel = HomeViewModel(
+            learningRepository = learningRepository,
+            collectionRepository = collectionRepository,
+            specimenRepository = repo,
+        )
+
+        viewModel.loadFeaturedSpecimen(forceRefresh = true)
+
+        assertTrue(forceRefreshUsed)
+    }
 }
 
 private open class FakeLearningProgressRepository : LearningProgressRepository {
