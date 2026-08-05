@@ -14,22 +14,39 @@ class LocalCollectionRepository @Inject constructor(
     private val dao: DinoPathDao,
 ) : CollectionRepository {
 
-    override fun observeFavourites(): Flow<List<DinosaurSpecimen>> {
-        return dao.observeFavouriteSpecimens().map { entities ->
-            entities.map { it.toDomain() }
-        }
+    override fun observeFavourites():
+            Flow<List<DinosaurSpecimen>> {
+        return dao.observeFavouriteSpecimens()
+            .map { entities ->
+                entities.map { entity ->
+                    entity.toDomain()
+                }
+            }
     }
 
-    override suspend fun addFavourite(specimen: DinosaurSpecimen) {
-        dao.upsertFavourite(specimen.toEntity())
+    override fun observeIsFavourite(
+        specimenId: String,
+    ): Flow<Boolean> {
+        return dao.observeIsFavourite(specimenId)
     }
 
-    override suspend fun removeFavourite(specimenId: String) {
+    override suspend fun addFavourite(
+        specimen: DinosaurSpecimen,
+    ) {
+        dao.upsertFavourite(
+            specimen.toEntity(),
+        )
+    }
+
+    override suspend fun removeFavourite(
+        specimenId: String,
+    ) {
         dao.deleteFavourite(specimenId)
     }
 }
 
-private fun FavouriteSpecimenEntity.toDomain(): DinosaurSpecimen {
+private fun FavouriteSpecimenEntity.toDomain():
+        DinosaurSpecimen {
     return DinosaurSpecimen(
         id = specimenId,
         name = name,
@@ -40,7 +57,8 @@ private fun FavouriteSpecimenEntity.toDomain(): DinosaurSpecimen {
     )
 }
 
-private fun DinosaurSpecimen.toEntity(): FavouriteSpecimenEntity {
+private fun DinosaurSpecimen.toEntity():
+        FavouriteSpecimenEntity {
     return FavouriteSpecimenEntity(
         specimenId = id,
         name = name,
