@@ -15,6 +15,7 @@ import com.example.dinopath.ui.screens.WelcomeScreen
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.dinopath.ui.knowledge.KnowledgeCheckViewModel
 import com.example.dinopath.ui.home.HomeViewModel
+import com.example.dinopath.ui.journal.JournalViewModel
 
 @Composable
 fun DinoNavHost(
@@ -93,7 +94,11 @@ fun DinoNavHost(
         }
 
         composable(DinoDestination.JOURNAL.route) {
-            JournalScreen()
+            val viewModel: JournalViewModel = hiltViewModel()
+
+            JournalScreen(
+                viewModel = viewModel,
+            )
         }
 
         composable(DinoDestination.COLLECTION.route) {

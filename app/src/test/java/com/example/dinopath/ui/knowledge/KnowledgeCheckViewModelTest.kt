@@ -1,7 +1,9 @@
 package com.example.dinopath.ui.knowledge
 
 import com.example.dinopath.domain.model.ChapterProgress
+import com.example.dinopath.domain.model.MistakeSummary
 import com.example.dinopath.domain.model.QuizCompletion
+import com.example.dinopath.domain.model.QuizHistory
 import com.example.dinopath.domain.model.QuizQuestion
 import com.example.dinopath.domain.repository.LearningProgressRepository
 import com.example.dinopath.domain.repository.QuizRepository
@@ -241,6 +243,14 @@ private open class FakeLearningProgressRepository :
 
     override fun observeChapterProgress():
             Flow<List<ChapterProgress>> {
+        return flowOf(emptyList())
+    }
+
+    override fun observeQuizHistory(): Flow<List<QuizHistory>> {
+        return flowOf(emptyList())
+    }
+
+    override fun observeUnmasteredMistakes(): Flow<List<MistakeSummary>> {
         return flowOf(emptyList())
     }
 

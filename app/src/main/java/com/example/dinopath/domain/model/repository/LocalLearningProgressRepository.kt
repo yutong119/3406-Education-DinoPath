@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.max
+import com.example.dinopath.domain.model.MistakeSummary
+import com.example.dinopath.domain.model.QuizHistory
 
 @Singleton
 class LocalLearningProgressRepository @Inject constructor(
@@ -28,6 +30,23 @@ class LocalLearningProgressRepository @Inject constructor(
 
     override fun observeChapterProgress(): Flow<List<ChapterProgress>> {
         return dao.observeChapterProgress().map { entities ->
+            entities.map { entity ->
+                entity.toDomain()
+            }
+        }
+    }
+
+    override fun observeQuizHistory(): Flow<List<QuizHistory>> {
+        return dao.observeQuizResults().map { entities ->
+            entities.map { entity ->
+                entity.toDomain()
+            }
+        }
+    }
+
+    override fun observeUnmasteredMistakes():
+            Flow<List<MistakeSummary>> {
+        return dao.observeUnmasteredMistakes().map { entities ->
             entities.map { entity ->
                 entity.toDomain()
             }
@@ -158,6 +177,29 @@ private fun ChapterProgressEntity.toDomain(): ChapterProgress {
     )
 }
 
+private fun QuizResultEntity.toDomain(): QuizHistory {
+    return QuizHistory(
+        resultId = resultId,
+        chapterId = chapterId,
+        score = score,
+        totalQuestions = totalQuestions,
+        accuracy = accuracy,
+        stars = stars,
+        completedAt = completedAt,
+    )
+}
+
+private fun MistakeEntity.toDomain(): MistakeSummary {
+    return MistakeSummary(
+        chapterId = chapterId,
+        questionId = questionId,
+        question = question,
+        selectedAnswer = selectedAnswer,
+        correctAnswer = correctAnswer,
+        explanation = explanation,
+        isMastered = isMastered,
+    )
+}
 private val initialChapters = listOf(
     ChapterProgressEntity(
         chapterId = ChapterIds.MEET_THE_DINOSAURS,
