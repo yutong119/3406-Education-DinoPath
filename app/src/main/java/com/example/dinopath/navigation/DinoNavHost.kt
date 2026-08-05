@@ -17,6 +17,7 @@ import com.example.dinopath.ui.knowledge.KnowledgeCheckViewModel
 import com.example.dinopath.ui.home.HomeViewModel
 import com.example.dinopath.ui.journal.JournalViewModel
 import com.example.dinopath.ui.mistakes.MistakeReviewViewModel
+import com.example.dinopath.ui.collection.CollectionViewModel
 import com.example.dinopath.ui.screens.MistakeReviewScreen
 
 @Composable
@@ -123,7 +124,8 @@ fun DinoNavHost(
         }
 
         composable(DinoDestination.COLLECTION.route) {
-            CollectionScreen()
+            val viewModel: CollectionViewModel = hiltViewModel()
+            CollectionScreen(viewModel = viewModel)
         }
 
         composable(DinoDestination.SETTINGS.route) {
