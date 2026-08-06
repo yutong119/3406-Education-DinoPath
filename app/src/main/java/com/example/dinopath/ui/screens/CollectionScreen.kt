@@ -32,7 +32,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,6 +54,7 @@ import com.example.dinopath.ui.components.ErrorStateCard
 import com.example.dinopath.ui.components.LoadingStateCard
 import com.example.dinopath.ui.collection.CollectionUiState
 import com.example.dinopath.ui.collection.CollectionViewModel
+import com.example.dinopath.ui.components.DinosaurDetailBottomSheet
 import com.example.dinopath.ui.components.MuseumCard
 import com.example.dinopath.ui.components.MuseumDangerButton
 import com.example.dinopath.ui.components.MuseumImageShape
@@ -65,17 +70,37 @@ fun CollectionScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    var selectedSpecimen by remember {
+        mutableStateOf<DinosaurSpecimen?>(null)
+    }
+
+    // Ensure bottom sheet closes if the specimen is removed
+    LaunchedEffect(uiState.favourites) {
+        if (selectedSpecimen != null && uiState.favourites.none { it.id == selectedSpecimen?.id }) {
+            selectedSpecimen = null
+        }
+    }
+
     CollectionContent(
         uiState = uiState,
         onRemoveSpecimen = viewModel::removeFavourite,
+        onSpecimenClick = { specimen -> selectedSpecimen = specimen },
         modifier = modifier,
     )
+
+    selectedSpecimen?.let { specimen ->
+        DinosaurDetailBottomSheet(
+            specimen = specimen,
+            onDismiss = { selectedSpecimen = null }
+        )
+    }
 }
 
 @Composable
 private fun CollectionContent(
     uiState: CollectionUiState,
     onRemoveSpecimen: (String) -> Unit,
+    onSpecimenClick: (DinosaurSpecimen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -122,6 +147,7 @@ private fun CollectionContent(
                         specimen = specimen,
                         isRemoving = uiState.removingSpecimenId == specimen.id,
                         onRemove = { onRemoveSpecimen(specimen.id) },
+                        onClick = { onSpecimenClick(specimen) }
                     )
                 }
 
@@ -155,10 +181,12 @@ private fun FavouriteSpecimenCard(
     specimen: DinosaurSpecimen,
     isRemoving: Boolean,
     onRemove: () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     MuseumCard(
         modifier = modifier.fillMaxWidth(),
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
@@ -245,6 +273,7 @@ private fun CollectionPreview() {
                 isLoading = false,
             ),
             onRemoveSpecimen = {},
+            onSpecimenClick = {}
         )
     }
 }
@@ -259,6 +288,7 @@ private fun CollectionEmptyPreview() {
                 isLoading = false,
             ),
             onRemoveSpecimen = {},
+            onSpecimenClick = {}
         )
     }
 }
