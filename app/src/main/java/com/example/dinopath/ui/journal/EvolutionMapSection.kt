@@ -13,8 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.RadioButtonChecked
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,6 +26,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.dinopath.domain.model.ChapterProgress
 import com.example.dinopath.domain.model.ChapterStatus
+import com.example.dinopath.ui.components.MuseumCard
+import com.example.dinopath.ui.components.MuseumSectionHeader
 
 @Composable
 fun EvolutionMapSection(
@@ -36,26 +36,15 @@ fun EvolutionMapSection(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text(
-            text = "EVOLUTION MAP",
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
+        MuseumSectionHeader(
+            title = "Evolution Map",
+            subtitle = "Your journey through prehistoric time"
         )
 
-        Text(
-            text = "Your journey through prehistoric time",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold,
-        )
-
-        Card(
+        MuseumCard(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
         ) {
             if (chapters.isEmpty()) {
                 Text(
@@ -65,7 +54,7 @@ fun EvolutionMapSection(
                 )
             } else {
                 Column(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(20.dp),
                 ) {
                     chapters.forEachIndexed { index, chapter ->
                         EvolutionNode(

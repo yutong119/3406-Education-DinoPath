@@ -21,10 +21,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +35,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dinopath.domain.model.QuizHistory
 import com.example.dinopath.ui.components.EmptyStateCard
 import com.example.dinopath.ui.components.LoadingStateCard
+import com.example.dinopath.ui.components.MuseumCard
+import com.example.dinopath.ui.components.MuseumIconContainer
+import com.example.dinopath.ui.components.MuseumOutlinedButton
+import com.example.dinopath.ui.components.MuseumPageTitle
+import com.example.dinopath.ui.components.MuseumSectionHeader
 import com.example.dinopath.ui.journal.JournalUiState
 import com.example.dinopath.ui.journal.JournalViewModel
 import java.text.DateFormat
@@ -69,17 +76,12 @@ private fun JournalContent(
             end = 20.dp,
             bottom = 40.dp,
         ),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         item {
-            Text(
-                text = "Explorer Journal",
-                modifier = Modifier.semantics {
-                    heading()
-                },
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
+            MuseumPageTitle(
+                title = "Explorer Journal",
+                subtitle = "Your record of prehistoric discovery"
             )
         }
 
@@ -97,18 +99,13 @@ private fun JournalContent(
             }
 
             item {
-                Button(
+                MuseumOutlinedButton(
+                    text = "REVIEW MISTAKES (${uiState.mistakeCount})",
                     onClick = onReviewMistakes,
                     enabled = uiState.mistakeCount > 0,
                     modifier = Modifier.fillMaxWidth(),
-                    ) {
-                    Text(
-                        text =
-                            "REVIEW MISTAKES " +
-                                    "(${uiState.mistakeCount})",
-                        fontWeight = FontWeight.Bold,
-                        )
-                }
+                    icon = Icons.Outlined.Quiz
+                )
             }
 
             item {
@@ -182,36 +179,30 @@ private fun StatisticsGrid(
 private fun JournalStatCard(
     label: String,
     value: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    MuseumCard(
         modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
+            MuseumIconContainer(icon = icon)
 
             Text(
                 text = value,
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
             Text(
-                text = label,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text = label.uppercase(),
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
             )
         }
     }
@@ -225,16 +216,11 @@ private fun RecentActivitySection(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text(
-            text = "RECENT ACTIVITY",
-            modifier = Modifier.semantics {
-                heading()
-            },
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
+        MuseumSectionHeader(
+            title = "Recent Activity",
+            icon = Icons.Outlined.History
         )
 
         if (activities.isEmpty()) {
@@ -244,17 +230,27 @@ private fun RecentActivitySection(
                 icon = Icons.Outlined.History,
             )
         } else {
-            activities.forEach { activity ->
-                RecentActivityCard(
-                    activity = activity,
-                )
+            MuseumCard(modifier = Modifier.fillMaxWidth()) {
+                Column {
+                    activities.forEachIndexed { index, activity ->
+                        RecentActivityRow(
+                            activity = activity,
+                        )
+                        if (index < activities.lastIndex) {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun RecentActivityCard(
+private fun RecentActivityRow(
     activity: QuizHistory,
     modifier: Modifier = Modifier,
 ) {
@@ -275,48 +271,43 @@ private fun RecentActivityCard(
             DateFormat.SHORT,
         ).format(Date(activity.completedAt))
 
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        MuseumIconContainer(
+            icon = Icons.Outlined.History,
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            iconColor = MaterialTheme.colorScheme.onSecondaryContainer
+        )
+
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Icon(
-                imageVector = Icons.Outlined.History,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+            Text(
+                text = chapterName,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
             )
 
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                Text(
-                    text = chapterName,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                )
+            Text(
+                text =
+                    "${activity.score}/${activity.totalQuestions}" +
+                            " · ${activity.accuracy}% · " +
+                            "${activity.stars} stars",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
 
-                Text(
-                    text =
-                        "${activity.score}/${activity.totalQuestions}" +
-                                " · ${activity.accuracy}% · " +
-                                "${activity.stars} stars",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-
-                Text(
-                    text = formattedDate,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            Text(
+                text = formattedDate,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
