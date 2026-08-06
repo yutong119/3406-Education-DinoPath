@@ -131,6 +131,7 @@ private fun SettingSwitchCard(
 ) {
     MuseumCard(
         modifier = modifier.fillMaxWidth(),
+        emphasized = true,
     ) {
         Row(
             modifier = Modifier.padding(18.dp),

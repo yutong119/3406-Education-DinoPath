@@ -279,6 +279,7 @@ private fun GalleryLearningCard(
 
     MuseumCard(
         modifier = modifier.fillMaxWidth(),
+        emphasized = true,
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
@@ -380,7 +381,8 @@ private fun DinosaurHighlightCard(
 ) {
     MuseumCard(
         modifier = modifier.width(260.dp),
-        onClick = onClick
+        onClick = onClick,
+        emphasized = true,
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

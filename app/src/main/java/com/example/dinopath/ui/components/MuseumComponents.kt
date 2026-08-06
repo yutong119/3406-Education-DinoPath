@@ -48,14 +48,22 @@ val MuseumIconShape = RoundedCornerShape(14.dp)
 fun MuseumCard(
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.surface,
+    emphasized: Boolean = false,
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
-    val border = if (isSystemInDarkTheme()) {
-        BorderStroke(1.dp, MuseumGoldBorder)
+    val isDark = isSystemInDarkTheme()
+    val border = if (isDark) {
+        if (emphasized) {
+            BorderStroke(1.25.dp, MuseumGoldBorder.copy(alpha = 0.58f))
+        } else {
+            BorderStroke(1.dp, MuseumGoldBorder.copy(alpha = 0.45f))
+        }
     } else {
         BorderStroke(1.dp, MuseumDarkBorder)
     }
+
+    val elevation = if (isDark) 1.dp else 0.dp
 
     if (onClick != null) {
         Card(
@@ -64,7 +72,7 @@ fun MuseumCard(
             shape = MuseumCardShape,
             colors = CardDefaults.cardColors(containerColor = containerColor),
             border = border,
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = elevation),
             content = { content() }
         )
     } else {
@@ -73,7 +81,7 @@ fun MuseumCard(
             shape = MuseumCardShape,
             colors = CardDefaults.cardColors(containerColor = containerColor),
             border = border,
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = elevation),
             content = { content() }
         )
     }

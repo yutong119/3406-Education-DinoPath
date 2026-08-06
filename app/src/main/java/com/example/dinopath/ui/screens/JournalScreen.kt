@@ -187,6 +187,7 @@ private fun JournalStatCard(
 ) {
     MuseumCard(
         modifier = modifier,
+        emphasized = true,
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
@@ -233,7 +234,10 @@ private fun RecentActivitySection(
                 icon = Icons.Outlined.History,
             )
         } else {
-            MuseumCard(modifier = Modifier.fillMaxWidth()) {
+            MuseumCard(
+                modifier = Modifier.fillMaxWidth(),
+                emphasized = true,
+            ) {
                 Column {
                     activities.forEachIndexed { index, activity ->
                         RecentActivityRow(

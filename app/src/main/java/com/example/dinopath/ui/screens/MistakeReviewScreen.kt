@@ -187,6 +187,7 @@ private fun MistakeCard(
 ) {
     MuseumCard(
         modifier = modifier.fillMaxWidth(),
+        emphasized = true,
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
@@ -270,6 +271,7 @@ private fun AnswerSection(
     MuseumCard(
         modifier = modifier.fillMaxWidth(),
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        emphasized = true,
     ) {
         Row(
             modifier = Modifier.padding(14.dp),

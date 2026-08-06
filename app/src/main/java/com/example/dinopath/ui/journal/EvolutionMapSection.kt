@@ -45,6 +45,7 @@ fun EvolutionMapSection(
 
         MuseumCard(
             modifier = Modifier.fillMaxWidth(),
+            emphasized = true,
         ) {
             if (chapters.isEmpty()) {
                 Text(

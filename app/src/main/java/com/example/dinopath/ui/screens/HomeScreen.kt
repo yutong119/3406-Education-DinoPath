@@ -315,6 +315,7 @@ private fun FeaturedSpecimenCard(
 ) {
     MuseumCard(
         modifier = modifier.fillMaxWidth(),
+        emphasized = true,
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
@@ -609,6 +610,7 @@ private fun LearningJourneySection(
 
         MuseumCard(
             modifier = Modifier.fillMaxWidth(),
+            emphasized = true,
         ) {
             if (chapters.isEmpty()) {
                 Text(

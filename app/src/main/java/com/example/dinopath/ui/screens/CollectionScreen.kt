@@ -186,7 +186,8 @@ private fun FavouriteSpecimenCard(
 ) {
     MuseumCard(
         modifier = modifier.fillMaxWidth(),
-        onClick = onClick
+        onClick = onClick,
+        emphasized = true,
     ) {
         Column(
             modifier = Modifier.padding(20.dp),

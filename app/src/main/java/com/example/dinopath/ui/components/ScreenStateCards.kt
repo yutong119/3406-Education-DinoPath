@@ -29,6 +29,7 @@ fun LoadingStateCard(
 ) {
     MuseumCard(
         modifier = modifier.fillMaxWidth(),
+        emphasized = true,
     ) {
         Column(
             modifier = Modifier
@@ -57,6 +58,7 @@ fun EmptyStateCard(
 ) {
     MuseumCard(
         modifier = modifier.fillMaxWidth(),
+        emphasized = true,
     ) {
         Column(
             modifier = Modifier
@@ -97,6 +99,7 @@ fun ErrorStateCard(
 ) {
     MuseumCard(
         modifier = modifier.fillMaxWidth(),
+        emphasized = true,
     ) {
         Column(
             modifier = Modifier
