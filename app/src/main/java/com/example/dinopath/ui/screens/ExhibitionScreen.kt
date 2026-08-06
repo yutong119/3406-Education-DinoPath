@@ -16,6 +16,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -49,6 +50,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.example.dinopath.R
+import com.example.dinopath.domain.model.DinosaurSpecimen
+import com.example.dinopath.ui.components.DinosaurDetailBottomSheet
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -68,6 +71,10 @@ fun ExhibitionScreen(
 ) {
     var selectedGallery by rememberSaveable {
         mutableStateOf(ExhibitionGallery.CLIMATE)
+    }
+
+    var selectedSpecimen by remember {
+        mutableStateOf<DinosaurSpecimen?>(null)
     }
 
     Column(modifier = modifier.fillMaxSize()) {
@@ -100,7 +107,11 @@ fun ExhibitionScreen(
                 )
             }
             item {
-                DinosaurHighlightsSection()
+                DinosaurHighlightsSection(
+                    onHighlightClick = { highlight ->
+                        selectedSpecimen = highlight.toSpecimen()
+                    }
+                )
             }
 
             item {
@@ -111,6 +122,13 @@ fun ExhibitionScreen(
                 )
             }
         }
+    }
+
+    selectedSpecimen?.let { specimen ->
+        DinosaurDetailBottomSheet(
+            specimen = specimen,
+            onDismiss = { selectedSpecimen = null }
+        )
     }
 }
 
@@ -322,6 +340,7 @@ private fun GalleryLearningCard(
 
 @Composable
 private fun DinosaurHighlightsSection(
+    onHighlightClick: (DinosaurHighlight) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -344,6 +363,7 @@ private fun DinosaurHighlightsSection(
             ) { index ->
                 DinosaurHighlightCard(
                     dinosaur = dinosaurHighlights[index],
+                    onClick = { onHighlightClick(dinosaurHighlights[index]) }
                 )
 
             }
@@ -355,10 +375,12 @@ private fun DinosaurHighlightsSection(
 @Composable
 private fun DinosaurHighlightCard(
     dinosaur: DinosaurHighlight,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     MuseumCard(
         modifier = modifier.width(260.dp),
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -495,6 +517,14 @@ private val dinosaurHighlights = listOf(
                     "Late Jurassic.",
         imageRes = R.drawable.allosaurus,
     ),
+)
+
+private fun DinosaurHighlight.toSpecimen() = DinosaurSpecimen(
+    id = name.lowercase(),
+    name = name,
+    period = "Jurassic Period",
+    diet = diet,
+    description = description
 )
 
 @Preview(
