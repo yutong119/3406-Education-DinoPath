@@ -48,6 +48,8 @@ import com.example.dinopath.ui.components.LoadingStateCard
 import com.example.dinopath.ui.collection.CollectionUiState
 import com.example.dinopath.ui.collection.CollectionViewModel
 import com.example.dinopath.ui.theme.DinoPathTheme
+import androidx.compose.ui.layout.ContentScale
+import com.example.dinopath.ui.components.LocalDinosaurImage
 
 @Composable
 fun CollectionScreen(
@@ -182,21 +184,14 @@ private fun FavouriteSpecimenCard(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            shape = RoundedCornerShape(12.dp),
-                        ),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Pets,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
-                }
+                LocalDinosaurImage(
+                    specimenId = specimen.id,
+                    specimenName = specimen.name,
+                    contentDescription =
+                        "${specimen.name} collection thumbnail",
+                    modifier = Modifier.size(84.dp),
+                    contentScale = ContentScale.Crop,
+                )
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
