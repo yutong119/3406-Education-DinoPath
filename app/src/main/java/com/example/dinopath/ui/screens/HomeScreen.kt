@@ -73,6 +73,7 @@ import androidx.compose.ui.res.painterResource
 import com.example.dinopath.R
 import com.example.dinopath.ui.components.MuseumCard
 import com.example.dinopath.ui.components.MuseumIconContainer
+import com.example.dinopath.ui.components.MuseumImageShape
 import com.example.dinopath.ui.components.MuseumPageTitle
 import com.example.dinopath.ui.components.MuseumPrimaryButton
 import com.example.dinopath.ui.components.MuseumSectionHeader
@@ -376,7 +377,7 @@ private fun FeaturedSpecimenCard(
             when {
                 isLoading -> {
                     LocalStegosaurusImage(
-                        modifier = Modifier.clip(RoundedCornerShape(14.dp))
+                        modifier = Modifier.clip(MuseumImageShape)
                     )
 
                     Row(
@@ -406,7 +407,7 @@ private fun FeaturedSpecimenCard(
 
                 error != null -> {
                     LocalStegosaurusImage(
-                        modifier = Modifier.clip(RoundedCornerShape(14.dp))
+                        modifier = Modifier.clip(MuseumImageShape)
                     )
 
                     Text(
@@ -461,7 +462,7 @@ private fun FeaturedSpecimenCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(180.dp)
-                            .clip(RoundedCornerShape(14.dp))
+                            .clip(MuseumImageShape)
                             .background(
                                 color =
                                     MaterialTheme.colorScheme

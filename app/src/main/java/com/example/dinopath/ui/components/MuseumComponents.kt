@@ -37,6 +37,12 @@ import androidx.compose.ui.unit.dp
 import com.example.dinopath.ui.theme.MuseumDarkBorder
 import com.example.dinopath.ui.theme.MuseumGoldBorder
 
+// Museum Visual System Shapes
+val MuseumCardShape = RoundedCornerShape(20.dp)
+val MuseumImageShape = RoundedCornerShape(16.dp)
+val MuseumButtonShape = RoundedCornerShape(16.dp)
+val MuseumIconShape = RoundedCornerShape(14.dp)
+
 @Composable
 fun MuseumCard(
     modifier: Modifier = Modifier,
@@ -54,7 +60,7 @@ fun MuseumCard(
         Card(
             onClick = onClick,
             modifier = modifier,
-            shape = RoundedCornerShape(18.dp),
+            shape = MuseumCardShape,
             colors = CardDefaults.cardColors(containerColor = containerColor),
             border = border,
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
@@ -63,7 +69,7 @@ fun MuseumCard(
     } else {
         Card(
             modifier = modifier,
-            shape = RoundedCornerShape(18.dp),
+            shape = MuseumCardShape,
             colors = CardDefaults.cardColors(containerColor = containerColor),
             border = border,
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
@@ -146,7 +152,7 @@ fun MuseumPrimaryButton(
         onClick = onClick,
         modifier = modifier.height(56.dp),
         enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
+        shape = MuseumButtonShape,
         colors = ButtonDefaults.buttonColors(
             containerColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary,
             contentColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary
@@ -178,7 +184,7 @@ fun MuseumOutlinedButton(
         onClick = onClick,
         modifier = modifier.height(56.dp),
         enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
+        shape = MuseumButtonShape,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -206,7 +212,7 @@ fun MuseumDangerButton(
         onClick = onClick,
         modifier = modifier.height(52.dp),
         enabled = enabled,
-        shape = RoundedCornerShape(14.dp),
+        shape = MuseumButtonShape,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = MaterialTheme.colorScheme.error
@@ -269,7 +275,7 @@ fun MuseumIconContainer(
     Box(
         modifier = modifier
             .size(48.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(MuseumIconShape)
             .background(containerColor),
         contentAlignment = Alignment.Center
     ) {

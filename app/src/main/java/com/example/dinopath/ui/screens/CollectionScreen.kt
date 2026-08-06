@@ -52,6 +52,7 @@ import com.example.dinopath.ui.collection.CollectionUiState
 import com.example.dinopath.ui.collection.CollectionViewModel
 import com.example.dinopath.ui.components.MuseumCard
 import com.example.dinopath.ui.components.MuseumDangerButton
+import com.example.dinopath.ui.components.MuseumImageShape
 import com.example.dinopath.ui.components.MuseumPageTitle
 import com.example.dinopath.ui.theme.DinoPathTheme
 import androidx.compose.ui.layout.ContentScale
@@ -175,7 +176,7 @@ private fun FavouriteSpecimenCard(
                         "${specimen.name} collection thumbnail",
                     modifier = Modifier
                         .size(100.dp)
-                        .clip(RoundedCornerShape(12.dp)),
+                        .clip(MuseumImageShape),
                     contentScale = ContentScale.Crop,
                 )
 

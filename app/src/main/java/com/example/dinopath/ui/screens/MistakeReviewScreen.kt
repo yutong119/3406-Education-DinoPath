@@ -37,6 +37,7 @@ import com.example.dinopath.domain.model.MistakeSummary
 import com.example.dinopath.ui.components.EmptyStateCard
 import com.example.dinopath.ui.components.ErrorStateCard
 import com.example.dinopath.ui.components.LoadingStateCard
+import com.example.dinopath.ui.components.MuseumCard
 import com.example.dinopath.ui.mistakes.MistakeReviewUiState
 import com.example.dinopath.ui.mistakes.MistakeReviewViewModel
 
@@ -187,11 +188,8 @@ private fun MistakeCard(
     onMarkMastered: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    MuseumCard(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
@@ -290,12 +288,9 @@ private fun AnswerSection(
     isCorrectAnswer: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    MuseumCard(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor =
-                MaterialTheme.colorScheme.surfaceVariant,
-        ),
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
     ) {
         Row(
             modifier = Modifier.padding(14.dp),

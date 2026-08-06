@@ -55,6 +55,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.example.dinopath.ui.components.MuseumCard
+import com.example.dinopath.ui.components.MuseumImageShape
 import com.example.dinopath.ui.components.MuseumPrimaryButton
 import com.example.dinopath.ui.components.MuseumSectionHeader
 import com.example.dinopath.ui.theme.MuseumOverlay
@@ -374,7 +375,7 @@ private fun DinosaurHighlightCard(
                     .fillMaxWidth()
                     .height(150.dp)
                     .clip(
-                        RoundedCornerShape(14.dp),
+                        MuseumImageShape,
                     ),
                 contentScale = ContentScale.Crop,
             )
