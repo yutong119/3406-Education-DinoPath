@@ -59,6 +59,11 @@ import com.example.dinopath.ui.components.LoadingStateCard
 import com.example.dinopath.ui.home.HomeUiState
 import com.example.dinopath.ui.home.HomeViewModel
 import com.example.dinopath.ui.theme.DinoPathTheme
+import androidx.compose.foundation.Image
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.example.dinopath.R
 
 @Composable
 fun HomeScreen(
@@ -320,23 +325,29 @@ private fun FeaturedSpecimenCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor =
+                MaterialTheme.colorScheme.surface,
         ),
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement =
+                Arrangement.spacedBy(12.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement =
+                    Arrangement.SpaceBetween,
+                verticalAlignment =
+                    Alignment.CenterVertically,
             ) {
                 Text(
                     text = "FEATURED SPECIMEN",
-                    style = MaterialTheme.typography.labelLarge,
+                    style =
+                        MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
+                    color =
+                        MaterialTheme.colorScheme.primary,
                 )
 
                 IconButton(
@@ -350,96 +361,225 @@ private fun FeaturedSpecimenCard(
                         )
                     } else {
                         Icon(
-                            imageVector = if (isFavourite) {
-                                Icons.Filled.Favorite
-                            } else {
-                                Icons.Outlined.FavoriteBorder
-                            },
-                            contentDescription = if (isFavourite) {
-                                "Remove from collection"
-                            } else {
-                                "Add to collection"
-                            },
-                            tint = MaterialTheme.colorScheme.primary,
+                            imageVector =
+                                if (isFavourite) {
+                                    Icons.Filled.Favorite
+                                } else {
+                                    Icons.Outlined
+                                        .FavoriteBorder
+                                },
+                            contentDescription =
+                                if (isFavourite) {
+                                    "Remove Stegosaurus " +
+                                            "from collection"
+                                } else {
+                                    "Add Stegosaurus " +
+                                            "to collection"
+                                },
+                            tint =
+                                MaterialTheme.colorScheme
+                                    .primary,
                         )
                     }
                 }
             }
 
-            if (isLoading) {
-                LoadingStateCard(
-                    message = "Loading specimen…",
-                    modifier = Modifier.height(160.dp),
-                )
-            } else if (error != null) {
-                ErrorStateCard(
-                    title = "Unable to load specimen",
-                    message = error,
-                    onRetry = onRetry,
-                )
-            } else if (specimen != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(160.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            shape = RoundedCornerShape(16.dp),
-                        ),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    SubcomposeAsyncImage(
-                        model = specimen.imageUrl,
-                        contentDescription = "${specimen.displayTitle} specimen image",
-                        modifier = Modifier.fillMaxSize(),
-                        loading = {
-                            Box(contentAlignment = Alignment.Center) {
-                                CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                            }
-                        },
-                        error = {
-                            Icon(
-                                imageVector = Icons.Outlined.Pets,
-                                contentDescription = null,
-                                modifier = Modifier.size(56.dp),
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-                        },
-                    )
+            when {
+                /*
+                 * Show a complete local visual while live museum
+                 * notes are loading, instead of an empty card.
+                 */
+                isLoading -> {
+                    LocalStegosaurusImage()
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement =
+                            Arrangement.spacedBy(10.dp),
+                        verticalAlignment =
+                            Alignment.CenterVertically,
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp,
+                        )
+
+                        Text(
+                            text =
+                                "Loading live museum notes…",
+                            style =
+                                MaterialTheme.typography
+                                    .bodyMedium,
+                            color =
+                                MaterialTheme.colorScheme
+                                    .onSurfaceVariant,
+                        )
+                    }
                 }
 
-                Text(
-                    text = specimen.displayTitle,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
+                /*
+                 * A network failure must not turn the main museum
+                 * card into an unusable error block.
+                 */
+                error != null -> {
+                    LocalStegosaurusImage()
 
-                Text(
-                    text = specimen.summary,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
                     Text(
-                        text = "Source: Wikipedia",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.secondary,
+                        text = "Stegosaurus",
+                        style =
+                            MaterialTheme.typography
+                                .headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color =
+                            MaterialTheme.colorScheme
+                                .onSurface,
                     )
-                    if (specimen.isFromCache) {
+
+                    Text(
+                        text =
+                            "One of the most recognisable " +
+                                    "dinosaurs, known for its " +
+                                    "large back plates and " +
+                                    "spiked tail.",
+                        style =
+                            MaterialTheme.typography
+                                .bodyMedium,
+                        color =
+                            MaterialTheme.colorScheme
+                                .onSurfaceVariant,
+                    )
+
+                    Text(
+                        text =
+                            "Local museum guide · " +
+                                    "Live Wikipedia content " +
+                                    "is currently unavailable",
+                        style =
+                            MaterialTheme.typography
+                                .labelMedium,
+                        color =
+                            MaterialTheme.colorScheme
+                                .secondary,
+                    )
+
+                    Text(
+                        text = "Network message: $error",
+                        style =
+                            MaterialTheme.typography
+                                .bodySmall,
+                        color =
+                            MaterialTheme.colorScheme
+                                .onSurfaceVariant,
+                    )
+
+                    OutlinedButton(
+                        onClick = onRetry,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
                         Text(
-                            text = "·",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            text = "RETRY LIVE CONTENT",
+                            fontWeight = FontWeight.Bold,
                         )
+                    }
+                }
+
+                specimen != null -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .background(
+                                color =
+                                    MaterialTheme.colorScheme
+                                        .surfaceVariant,
+                                shape =
+                                    RoundedCornerShape(16.dp),
+                            ),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        SubcomposeAsyncImage(
+                            model = specimen.imageUrl,
+                            contentDescription =
+                                "${specimen.displayTitle} " +
+                                        "specimen image",
+                            modifier =
+                                Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                            loading = {
+                                /*
+                                 * The local image remains useful
+                                 * while Coil downloads the remote
+                                 * thumbnail.
+                                 */
+                                LocalStegosaurusImage(
+                                    modifier =
+                                        Modifier.fillMaxSize(),
+                                )
+                            },
+                            error = {
+                                LocalStegosaurusImage(
+                                    modifier =
+                                        Modifier.fillMaxSize(),
+                                )
+                            },
+                        )
+                    }
+
+                    Text(
+                        text = specimen.displayTitle,
+                        style =
+                            MaterialTheme.typography
+                                .headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color =
+                            MaterialTheme.colorScheme
+                                .onSurface,
+                    )
+
+                    Text(
+                        text = specimen.summary,
+                        style =
+                            MaterialTheme.typography
+                                .bodyMedium,
+                        color =
+                            MaterialTheme.colorScheme
+                                .onSurfaceVariant,
+                    )
+
+                    Row(
+                        verticalAlignment =
+                            Alignment.CenterVertically,
+                        horizontalArrangement =
+                            Arrangement.spacedBy(4.dp),
+                    ) {
                         Text(
-                            text = "Offline cache",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.secondary,
+                            text = "Source: Wikipedia",
+                            style =
+                                MaterialTheme.typography
+                                    .labelMedium,
+                            color =
+                                MaterialTheme.colorScheme
+                                    .secondary,
                         )
+
+                        if (specimen.isFromCache) {
+                            Text(
+                                text = "·",
+                                color =
+                                    MaterialTheme.colorScheme
+                                        .onSurfaceVariant,
+                            )
+
+                            Text(
+                                text = "Offline cache",
+                                style =
+                                    MaterialTheme.typography
+                                        .labelMedium,
+                                color =
+                                    MaterialTheme.colorScheme
+                                        .secondary,
+                            )
+                        }
                     }
                 }
             }
@@ -447,25 +587,51 @@ private fun FeaturedSpecimenCard(
             if (favouriteError != null) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment =
+                        Alignment.CenterVertically,
+                    horizontalArrangement =
+                        Arrangement.spacedBy(8.dp),
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.ErrorOutline,
+                        imageVector =
+                            Icons.Outlined.ErrorOutline,
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.error,
+                        tint =
+                            MaterialTheme.colorScheme.error,
                     )
+
                     Text(
                         text = favouriteError,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
+                        style =
+                            MaterialTheme.typography
+                                .bodySmall,
+                        color =
+                            MaterialTheme.colorScheme.error,
                     )
                 }
             }
         }
     }
 }
+
+@Composable
+private fun LocalStegosaurusImage(
+    modifier: Modifier = Modifier,
+) {
+    Image(
+        painter = painterResource(
+            id = R.drawable.stegosaurus,
+        ),
+        contentDescription =
+            "Stegosaurus museum illustration",
+        modifier = modifier
+            .fillMaxWidth()
+            .height(180.dp),
+        contentScale = ContentScale.Crop,
+    )
+}
+
 
 @Composable
 private fun LearningJourneySection(
