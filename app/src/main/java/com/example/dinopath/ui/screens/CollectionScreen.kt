@@ -21,6 +21,7 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Museum
 import androidx.compose.material.icons.outlined.Pets
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -33,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -47,6 +49,9 @@ import com.example.dinopath.ui.components.ErrorStateCard
 import com.example.dinopath.ui.components.LoadingStateCard
 import com.example.dinopath.ui.collection.CollectionUiState
 import com.example.dinopath.ui.collection.CollectionViewModel
+import com.example.dinopath.ui.components.MuseumCard
+import com.example.dinopath.ui.components.MuseumDangerButton
+import com.example.dinopath.ui.components.MuseumPageTitle
 import com.example.dinopath.ui.theme.DinoPathTheme
 import androidx.compose.ui.layout.ContentScale
 import com.example.dinopath.ui.components.LocalDinosaurImage
@@ -130,34 +135,14 @@ private fun CollectionHeader(
     count: Int,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 24.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(
-                text = "Museum Collection",
-                modifier = Modifier.semantics { heading() },
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-            )
-
-            Text(
-                text = if (count == 1) "1 specimen collected" else "$count specimens collected",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-
-        Icon(
-            imageVector = Icons.Outlined.Museum,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(32.dp),
+        MuseumPageTitle(
+            title = "Museum Collection",
+            subtitle = if (count == 1) "1 specimen collected" else "$count specimens collected"
         )
     }
 }
@@ -169,27 +154,26 @@ private fun FavouriteSpecimenCard(
     onRemove: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    MuseumCard(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                verticalAlignment = Alignment.Top,
             ) {
                 LocalDinosaurImage(
                     specimenId = specimen.id,
                     specimenName = specimen.name,
                     contentDescription =
                         "${specimen.name} collection thumbnail",
-                    modifier = Modifier.size(84.dp),
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(12.dp)),
                     contentScale = ContentScale.Crop,
                 )
 
@@ -200,20 +184,22 @@ private fun FavouriteSpecimenCard(
                         fontWeight = FontWeight.Bold,
                     )
 
-                    Text(
-                        text = specimen.period,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        AssistChip(
+                            onClick = {},
+                            label = {
+                                Text(
+                                    text = specimen.period,
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            },
+                            enabled = false
+                        )
+                    }
                 }
             }
-
-            Text(
-                text = "DIET: ${specimen.diet.uppercase()}",
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.secondary,
-            )
 
             Text(
                 text = specimen.description,
@@ -221,41 +207,12 @@ private fun FavouriteSpecimenCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
-            Button(
+            MuseumDangerButton(
+                text = if (isRemoving) "REMOVING…" else "REMOVE FROM COLLECTION",
                 onClick = onRemove,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .semantics {
-                        contentDescription = "Remove ${specimen.name} from collection"
-                    },
-                enabled = !isRemoving,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                ),
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                if (isRemoving) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("REMOVING…")
-                } else {
-                    Icon(
-                        imageVector = Icons.Outlined.Delete,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "REMOVE FROM COLLECTION",
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-            }
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isRemoving
+            )
         }
     }
 }
