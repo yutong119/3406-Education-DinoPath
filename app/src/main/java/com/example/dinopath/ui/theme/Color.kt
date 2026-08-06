@@ -23,3 +23,10 @@ val LightMuseumSurface = Color(0xFFFFFBF4)
 val LightMuseumSurfaceVariant = Color(0xFFE8E2D5)
 
 val ErrorRed = Color(0xFFFFB4AB)
+
+// Museum UI accents
+val MuseumGoldBorder = Color(0x66E0B85A)
+val MuseumDarkBorder = Color(0x33081E14)
+val MuseumOverlay = Color(0x99081E14)
+val MuseumMutedText = Color(0xCCF7F1E5)
+val MuseumMutedTextDark = Color(0xCC6B4B32)
