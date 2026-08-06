@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
@@ -40,6 +41,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -61,9 +64,18 @@ import com.example.dinopath.ui.home.HomeViewModel
 import com.example.dinopath.ui.theme.DinoPathTheme
 import androidx.compose.foundation.Image
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.example.dinopath.R
+import com.example.dinopath.ui.components.MuseumCard
+import com.example.dinopath.ui.components.MuseumIconContainer
+import com.example.dinopath.ui.components.MuseumPageTitle
+import com.example.dinopath.ui.components.MuseumPrimaryButton
+import com.example.dinopath.ui.components.MuseumSectionHeader
+import com.example.dinopath.ui.components.MuseumStarBadge
+import com.example.dinopath.ui.theme.MuseumOverlay
 
 @Composable
 fun HomeScreen(
@@ -151,67 +163,36 @@ private fun HomeHeader(
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Text(
-                text = "DinoPath",
+        MuseumPageTitle(
+            title = "DinoPath",
+            subtitle = "Your Prehistoric Journey",
+            modifier = Modifier.weight(1f)
+        )
+
+        val reduceMotion = LocalReduceMotion.current
+        if (reduceMotion) {
+            MuseumStarBadge(
+                stars = totalStars,
                 modifier = Modifier.semantics {
-                    heading()
-                },
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-            )
-
-            Text(
-                text = "Your Prehistoric Journey",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .padding(top = 4.dp)
-                .semantics {
                     contentDescription = "$totalStars total stars"
-                },
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Star,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-
-            val reduceMotion = LocalReduceMotion.current
-            if (reduceMotion) {
-                Text(
-                    text = totalStars.toString(),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            } else {
-                AnimatedContent(
-                    targetState = totalStars,
-                    transitionSpec = {
-                        fadeIn(tween(300)) togetherWith fadeOut(tween(300))
-                    },
-                    label = "TotalStars"
-                ) { targetStars ->
-                    Text(
-                        text = targetStars.toString(),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
                 }
+            )
+        } else {
+            AnimatedContent(
+                targetState = totalStars,
+                transitionSpec = {
+                    fadeIn(tween(300)) togetherWith fadeOut(tween(300))
+                },
+                label = "TotalStars"
+            ) { targetStars ->
+                MuseumStarBadge(
+                    stars = targetStars,
+                    modifier = Modifier.semantics {
+                        contentDescription = "$targetStars total stars"
+                    }
+                )
             }
         }
     }
@@ -222,84 +203,92 @@ private fun DailyExpeditionCard(
     onContinueExpedition: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
+    MuseumCard(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(240.dp),
     ) {
-        Column(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            Text(
-                text = "TODAY'S EXPEDITION",
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
+        Box(modifier = Modifier.fillMaxSize()) {
+            Image(
+                painter = painterResource(id = R.drawable.brachiosaurus),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
             )
 
-            Text(
-                text = "Explore the Jurassic Period",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Schedule,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary,
-                )
-
-                Text(
-                    text = "8 min",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-
-                Text(
-                    text = "•",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-
-                Text(
-                    text = "2 of 3 activities",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-
-            Spacer(modifier = Modifier.height(2.dp))
-
-            LinearProgressIndicator(
-                progress = { 0.67f },
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp),
-                color = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    .fillMaxSize()
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                MuseumOverlay
+                            ),
+                            startY = 100f
+                        )
+                    )
             )
 
-            Button(
-                onClick = onContinueExpedition,
-                modifier = Modifier.fillMaxWidth(),
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.Bottom,
             ) {
                 Text(
-                    text = "CONTINUE EXPEDITION",
+                    text = "TODAY'S EXPEDITION",
+                    style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
                 )
 
-                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "Explore the Jurassic Period",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White,
+                )
 
-                Icon(
-                    imageVector =
-                        Icons.AutoMirrored.Outlined.ArrowForward,
-                    contentDescription = null,
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Schedule,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(16.dp)
+                    )
+
+                    Text(
+                        text = "8 min • 2 of 3 activities",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.8f),
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                LinearProgressIndicator(
+                    progress = { 0.67f },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(6.dp)
+                        .clip(RoundedCornerShape(3.dp)),
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = Color.White.copy(alpha = 0.2f),
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                MuseumPrimaryButton(
+                    text = "CONTINUE EXPEDITION",
+                    onClick = onContinueExpedition,
+                    modifier = Modifier.fillMaxWidth(),
+                    icon = Icons.AutoMirrored.Outlined.ArrowForward
                 )
             }
         }
@@ -318,12 +307,8 @@ private fun FeaturedSpecimenCard(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    MuseumCard(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor =
-                MaterialTheme.colorScheme.surface,
-        ),
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
@@ -349,6 +334,10 @@ private fun FeaturedSpecimenCard(
                 IconButton(
                     onClick = onToggleFavourite,
                     enabled = !isUpdating,
+                    modifier = Modifier.background(
+                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+                        shape = CircleShape
+                    )
                 ) {
                     if (isUpdating) {
                         CircularProgressIndicator(
@@ -381,12 +370,10 @@ private fun FeaturedSpecimenCard(
             }
 
             when {
-                /*
-                 * Show a complete local visual while live museum
-                 * notes are loading, instead of an empty card.
-                 */
                 isLoading -> {
-                    LocalStegosaurusImage()
+                    LocalStegosaurusImage(
+                        modifier = Modifier.clip(RoundedCornerShape(14.dp))
+                    )
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -413,12 +400,10 @@ private fun FeaturedSpecimenCard(
                     }
                 }
 
-                /*
-                 * A network failure must not turn the main museum
-                 * card into an unusable error block.
-                 */
                 error != null -> {
-                    LocalStegosaurusImage()
+                    LocalStegosaurusImage(
+                        modifier = Modifier.clip(RoundedCornerShape(14.dp))
+                    )
 
                     Text(
                         text = "Stegosaurus",
@@ -446,10 +431,7 @@ private fun FeaturedSpecimenCard(
                     )
 
                     Text(
-                        text =
-                            "Local museum guide · " +
-                                    "Live Wikipedia content " +
-                                    "is currently unavailable",
+                        text = "Offline guide · Live content unavailable",
                         style =
                             MaterialTheme.typography
                                 .labelMedium,
@@ -458,19 +440,10 @@ private fun FeaturedSpecimenCard(
                                 .secondary,
                     )
 
-                    Text(
-                        text = "Network message: $error",
-                        style =
-                            MaterialTheme.typography
-                                .bodySmall,
-                        color =
-                            MaterialTheme.colorScheme
-                                .onSurfaceVariant,
-                    )
-
                     OutlinedButton(
                         onClick = onRetry,
                         modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
                             text = "RETRY LIVE CONTENT",
@@ -484,12 +457,11 @@ private fun FeaturedSpecimenCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(180.dp)
+                            .clip(RoundedCornerShape(14.dp))
                             .background(
                                 color =
                                     MaterialTheme.colorScheme
                                         .surfaceVariant,
-                                shape =
-                                    RoundedCornerShape(16.dp),
                             ),
                         contentAlignment = Alignment.Center,
                     ) {
@@ -502,11 +474,6 @@ private fun FeaturedSpecimenCard(
                                 Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
                             loading = {
-                                /*
-                                 * The local image remains useful
-                                 * while Coil downloads the remote
-                                 * thumbnail.
-                                 */
                                 LocalStegosaurusImage(
                                     modifier =
                                         Modifier.fillMaxSize(),
@@ -548,32 +515,27 @@ private fun FeaturedSpecimenCard(
                         horizontalArrangement =
                             Arrangement.spacedBy(4.dp),
                     ) {
-                        Text(
-                            text = "Source: Wikipedia",
-                            style =
-                                MaterialTheme.typography
-                                    .labelMedium,
-                            color =
-                                MaterialTheme.colorScheme
-                                    .secondary,
+                        AssistChip(
+                            onClick = {},
+                            label = {
+                                Text(
+                                    text = "Wikipedia",
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            },
+                            enabled = false
                         )
 
                         if (specimen.isFromCache) {
-                            Text(
-                                text = "·",
-                                color =
-                                    MaterialTheme.colorScheme
-                                        .onSurfaceVariant,
-                            )
-
-                            Text(
-                                text = "Offline cache",
-                                style =
-                                    MaterialTheme.typography
-                                        .labelMedium,
-                                color =
-                                    MaterialTheme.colorScheme
-                                        .secondary,
+                            AssistChip(
+                                onClick = {},
+                                label = {
+                                    Text(
+                                        text = "Offline cache",
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                },
+                                enabled = false
                             )
                         }
                     }
@@ -636,27 +598,16 @@ private fun LearningJourneySection(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text(
-            text = "LEARNING JOURNEY",
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
+        MuseumSectionHeader(
+            title = "Learning Journey",
+            subtitle = "Travel through the age of dinosaurs",
+            icon = Icons.Outlined.Pets
         )
 
-        Text(
-            text = "Travel through the age of dinosaurs",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-
-        Card(
+        MuseumCard(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
         ) {
             if (chapters.isEmpty()) {
                 Text(
@@ -669,7 +620,7 @@ private fun LearningJourneySection(
                 Column(
                     modifier = Modifier.padding(
                         horizontal = 16.dp,
-                        vertical = 12.dp,
+                        vertical = 20.dp,
                     ),
                 ) {
                     chapters.forEachIndexed { index, chapter ->
