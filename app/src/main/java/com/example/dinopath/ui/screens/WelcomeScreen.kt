@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.dinopath.R
+import com.example.dinopath.ui.components.MuseumPrimaryButton
 import com.example.dinopath.ui.theme.LocalReduceMotion
 
 private val WelcomeTextColour =
@@ -161,22 +161,17 @@ fun WelcomeScreen(
                 modifier = Modifier.height(36.dp),
             )
 
-            Button(
+            MuseumPrimaryButton(
+                text = "ENTER THE MUSEUM",
                 onClick = onEnterMuseum,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(58.dp)
                     .scale(buttonScale)
                     .semantics {
                         contentDescription =
                             "Enter the DinoPath museum"
                     },
-            ) {
-                Text(
-                    text = "ENTER THE MUSEUM",
-                    fontWeight = FontWeight.Bold,
-                )
-            }
+            )
 
             Spacer(
                 modifier = Modifier.height(22.dp),

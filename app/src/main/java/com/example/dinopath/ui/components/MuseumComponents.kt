@@ -20,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -146,28 +147,42 @@ fun MuseumPrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    icon: ImageVector? = null
+    leadingIcon: ImageVector? = null,
+    trailingIcon: ImageVector? = null,
+    loading: Boolean = false,
 ) {
     Button(
         onClick = onClick,
         modifier = modifier.height(56.dp),
-        enabled = enabled,
+        enabled = enabled && !loading,
         shape = MuseumButtonShape,
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary,
-            contentColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
         )
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            if (icon != null) {
-                Icon(imageVector = icon, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-            }
-            Text(
-                text = text.uppercase(),
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold
+        if (loading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                color = MaterialTheme.colorScheme.onPrimary,
+                strokeWidth = 2.dp
             )
+        } else {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (leadingIcon != null) {
+                    Icon(imageVector = leadingIcon, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+                Text(
+                    text = text.uppercase(),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                if (trailingIcon != null) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(imageVector = trailingIcon, contentDescription = null)
+                }
+            }
         }
     }
 }
@@ -178,25 +193,39 @@ fun MuseumOutlinedButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    icon: ImageVector? = null
+    leadingIcon: ImageVector? = null,
+    trailingIcon: ImageVector? = null,
+    loading: Boolean = false,
 ) {
     OutlinedButton(
         onClick = onClick,
         modifier = modifier.height(56.dp),
-        enabled = enabled,
+        enabled = enabled && !loading,
         shape = MuseumButtonShape,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            if (icon != null) {
-                Icon(imageVector = icon, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-            }
-            Text(
-                text = text.uppercase(),
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold
+        if (loading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                color = MaterialTheme.colorScheme.primary,
+                strokeWidth = 2.dp
             )
+        } else {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (leadingIcon != null) {
+                    Icon(imageVector = leadingIcon, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+                Text(
+                    text = text.uppercase(),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                if (trailingIcon != null) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(imageVector = trailingIcon, contentDescription = null)
+                }
+            }
         }
     }
 }
@@ -206,23 +235,39 @@ fun MuseumDangerButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    loading: Boolean = false,
+    leadingIcon: ImageVector? = null,
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier.height(52.dp),
-        enabled = enabled,
+        modifier = modifier.height(54.dp),
+        enabled = enabled && !loading,
         shape = MuseumButtonShape,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = MaterialTheme.colorScheme.error
         )
     ) {
-        Text(
-            text = text.uppercase(),
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold
-        )
+        if (loading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                color = MaterialTheme.colorScheme.error,
+                strokeWidth = 2.dp
+            )
+        } else {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (leadingIcon != null) {
+                    Icon(imageVector = leadingIcon, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+                Text(
+                    text = text.uppercase(),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
     }
 }
 

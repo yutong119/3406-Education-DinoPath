@@ -74,6 +74,7 @@ import com.example.dinopath.R
 import com.example.dinopath.ui.components.MuseumCard
 import com.example.dinopath.ui.components.MuseumIconContainer
 import com.example.dinopath.ui.components.MuseumImageShape
+import com.example.dinopath.ui.components.MuseumOutlinedButton
 import com.example.dinopath.ui.components.MuseumPageTitle
 import com.example.dinopath.ui.components.MuseumPrimaryButton
 import com.example.dinopath.ui.components.MuseumSectionHeader
@@ -293,7 +294,7 @@ private fun DailyExpeditionCard(
                     text = "CONTINUE EXPEDITION",
                     onClick = onContinueExpedition,
                     modifier = Modifier.fillMaxWidth(),
-                    icon = Icons.AutoMirrored.Outlined.ArrowForward
+                    trailingIcon = Icons.AutoMirrored.Outlined.ArrowForward
                 )
             }
         }
@@ -445,16 +446,11 @@ private fun FeaturedSpecimenCard(
                                 .secondary,
                     )
 
-                    OutlinedButton(
+                    MuseumOutlinedButton(
+                        text = "RETRY LIVE CONTENT",
                         onClick = onRetry,
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text(
-                            text = "RETRY LIVE CONTENT",
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
+                    )
                 }
 
                 specimen != null -> {

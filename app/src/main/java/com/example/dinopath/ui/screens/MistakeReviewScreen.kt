@@ -15,10 +15,6 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Quiz
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +34,7 @@ import com.example.dinopath.ui.components.EmptyStateCard
 import com.example.dinopath.ui.components.ErrorStateCard
 import com.example.dinopath.ui.components.LoadingStateCard
 import com.example.dinopath.ui.components.MuseumCard
+import com.example.dinopath.ui.components.MuseumPrimaryButton
 import com.example.dinopath.ui.mistakes.MistakeReviewUiState
 import com.example.dinopath.ui.mistakes.MistakeReviewViewModel
 
@@ -252,31 +249,13 @@ private fun MistakeCard(
                 )
             }
 
-            Button(
+            MuseumPrimaryButton(
+                text = "MARK AS MASTERED",
                 onClick = onMarkMastered,
-                enabled = !isProcessing,
+                loading = isProcessing,
                 modifier = Modifier.fillMaxWidth(),
-            ) {
-                if (isProcessing) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.padding(end = 10.dp),
-                        strokeWidth = 2.dp,
-                    )
-
-                    Text("UPDATING…")
-                } else {
-                    Icon(
-                        imageVector =
-                            Icons.Outlined.CheckCircle,
-                        contentDescription = null,
-                    )
-
-                    Text(
-                        text = "MARK AS MASTERED",
-                        modifier = Modifier.padding(start = 8.dp),
-                    )
-                }
-            }
+                leadingIcon = Icons.Outlined.CheckCircle,
+            )
         }
     }
 }

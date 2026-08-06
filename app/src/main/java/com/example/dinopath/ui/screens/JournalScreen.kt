@@ -107,7 +107,7 @@ private fun JournalContent(
                     onClick = onReviewMistakes,
                     enabled = uiState.mistakeCount > 0,
                     modifier = Modifier.fillMaxWidth(),
-                    icon = Icons.Outlined.Quiz
+                    leadingIcon = Icons.Outlined.Quiz
                 )
             }
 

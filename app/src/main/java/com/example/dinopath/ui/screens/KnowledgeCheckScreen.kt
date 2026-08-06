@@ -18,7 +18,6 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -26,7 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,6 +49,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.delay
 import com.example.dinopath.ui.theme.LocalReduceMotion
+import com.example.dinopath.ui.components.MuseumPrimaryButton
+import com.example.dinopath.ui.components.MuseumOutlinedButton
 import com.example.dinopath.ui.knowledge.KnowledgeCheckUiState
 import com.example.dinopath.ui.knowledge.KnowledgeCheckViewModel
 
@@ -145,13 +145,12 @@ private fun KnowledgeCheckContent(
 
         if (!uiState.hasSubmitted) {
             item {
-                Button(
+                MuseumPrimaryButton(
+                    text = "SUBMIT ANSWER",
                     onClick = onSubmitAnswer,
                     enabled = uiState.selectedAnswer != null,
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text("SUBMIT ANSWER")
-                }
+                )
             }
         } else {
             item {
@@ -170,18 +169,15 @@ private fun KnowledgeCheckContent(
             }
 
             item {
-                Button(
+                MuseumPrimaryButton(
+                    text = if (uiState.isLastQuestion) {
+                        "VIEW RESULT"
+                    } else {
+                        "NEXT QUESTION"
+                    },
                     onClick = onNextQuestion,
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = if (uiState.isLastQuestion) {
-                            "VIEW RESULT"
-                        } else {
-                            "NEXT QUESTION"
-                        },
-                    )
-                }
+                )
             }
         }
     }
@@ -407,12 +403,11 @@ private fun QuizSavingScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(vertical = 12.dp),
             )
-            Button(
+            MuseumPrimaryButton(
+                text = "RETRY",
                 onClick = onRetry,
                 modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text("RETRY")
-            }
+            )
         }
     }
 }
@@ -506,23 +501,21 @@ private fun QuizResultScreen(
         }
 
         item {
-            Button(
+            MuseumPrimaryButton(
+                text = "BACK TO LOBBY",
                 onClick = onBackToLobby,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-            ) {
-                Text("BACK TO LOBBY")
-            }
+            )
         }
 
         item {
-            OutlinedButton(
+            MuseumOutlinedButton(
+                text = if (showReview) "HIDE REVIEW" else "REVIEW ANSWERS",
                 onClick = { showReview = !showReview },
                 modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(if (showReview) "HIDE REVIEW" else "REVIEW ANSWERS")
-            }
+            )
         }
 
         if (showReview) {
@@ -535,14 +528,13 @@ private fun QuizResultScreen(
         }
 
         item {
-            OutlinedButton(
+            MuseumOutlinedButton(
+                text = "RETURN TO EXHIBITION",
                 onClick = onReturnToExhibition,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-            ) {
-                Text("RETURN TO EXHIBITION")
-            }
+            )
         }
     }
 }
