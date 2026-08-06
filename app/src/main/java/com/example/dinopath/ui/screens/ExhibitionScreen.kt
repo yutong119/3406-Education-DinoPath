@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,56 +49,64 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.example.dinopath.R
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import com.example.dinopath.ui.components.MuseumCard
+import com.example.dinopath.ui.components.MuseumPrimaryButton
+import com.example.dinopath.ui.components.MuseumSectionHeader
+import com.example.dinopath.ui.theme.MuseumOverlay
 
 @Composable
 fun ExhibitionScreen(
     onStartKnowledgeCheck: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selectedGallery by rememberSaveable {
         mutableStateOf(ExhibitionGallery.CLIMATE)
     }
 
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
-            start = 20.dp,
-            top = 24.dp,
-            end = 20.dp,
-            bottom = 40.dp,
-        ),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-    ) {
-        item {
-            ExhibitionHeader(
-                progress = 0.60f,
-            )
-        }
-        item {
-            GallerySelector(
-                selectedGallery = selectedGallery,
-                onGallerySelected = { gallery ->
-                    selectedGallery = gallery
-                },
-            )
-        }
-        item {
-            GalleryLearningCard(
-                gallery = selectedGallery,
-            )
-        }
-        item {
-            DinosaurHighlightsSection()
-        }
+    Column(modifier = modifier.fillMaxSize()) {
+        ExhibitionHeader(
+            progress = 0.60f,
+            onBack = onBack
+        )
 
-        item {
-            Button(
-                onClick = onStartKnowledgeCheck,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                start = 20.dp,
+                top = 20.dp,
+                end = 20.dp,
+                bottom = 40.dp,
+            ),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+            item {
+                GallerySelector(
+                    selectedGallery = selectedGallery,
+                    onGallerySelected = { gallery ->
+                        selectedGallery = gallery
+                    },
+                )
+            }
+            item {
+                GalleryLearningCard(
+                    gallery = selectedGallery,
+                )
+            }
+            item {
+                DinosaurHighlightsSection()
+            }
+
+            item {
+                MuseumPrimaryButton(
                     text = "START KNOWLEDGE CHECK",
-                    fontWeight = FontWeight.Bold,
+                    onClick = onStartKnowledgeCheck,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }
@@ -107,71 +116,103 @@ fun ExhibitionScreen(
 @Composable
 private fun ExhibitionHeader(
     progress: Float,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(260.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top,
+        Image(
+            painter = painterResource(id = R.drawable.brachiosaurus),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Transparent,
+                            MuseumOverlay
+                        ),
+                        startY = 100f
+                    )
+                )
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp),
+            verticalArrangement = Arrangement.Bottom
         ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+            Text(
+                text = "Jurassic Period",
+                style = MaterialTheme.typography.displaySmall,
+                color = Color.White,
+                modifier = Modifier.semantics { heading() }
+            )
+
+            Text(
+                text = "201–145 million years ago",
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White.copy(alpha = 0.8f)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = "Jurassic Period",
-                    modifier = Modifier.semantics {
-                        heading()
-                    },
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
+                    text = "Exhibition 3 of 7",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Color.White.copy(alpha = 0.9f)
                 )
 
                 Text(
-                    text = "201–145 million years ago",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    text = "${(progress * 100).toInt()}%",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
 
-            Icon(
-                imageVector = Icons.Outlined.Museum,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        }
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(
-                text = "Exhibition 3 of 7",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            Text(
-                text = "${(progress * 100).toInt()}%",
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(6.dp)
+                    .clip(RoundedCornerShape(3.dp)),
                 color = MaterialTheme.colorScheme.primary,
+                trackColor = Color.White.copy(alpha = 0.2f),
             )
         }
 
-        LinearProgressIndicator(
-            progress = { progress },
+        IconButton(
+            onClick = onBack,
             modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp),
-            color = MaterialTheme.colorScheme.primary,
-            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-        )
+                .padding(top = 48.dp, start = 12.dp)
+                .align(Alignment.TopStart),
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = MuseumOverlay.copy(alpha = 0.4f),
+                contentColor = Color.White
+            )
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Go back"
+            )
+        }
     }
 }
 
@@ -217,15 +258,12 @@ private fun GalleryLearningCard(
 ) {
     val content = gallery.content()
 
-    Card(
+    MuseumCard(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
                 text = content.title,
@@ -247,12 +285,21 @@ private fun GalleryLearningCard(
                 color = MaterialTheme.colorScheme.primary,
             )
 
-            content.facts.forEach { fact ->
-                Text(
-                    text = "•  $fact",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                content.facts.forEach { fact ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            text = "•",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                        Text(
+                            text = fact,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
+                }
             }
 
             Text(
@@ -278,17 +325,15 @@ private fun DinosaurHighlightsSection(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text(
-            text = "DINOSAUR HIGHLIGHTS",
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
+        MuseumSectionHeader(
+            title = "Dinosaur Highlights",
+            icon = Icons.Outlined.Pets
         )
 
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             items(
                 count = dinosaurHighlights.size,
@@ -311,17 +356,13 @@ private fun DinosaurHighlightCard(
     dinosaur: DinosaurHighlight,
     modifier: Modifier = Modifier,
 ) {
-    Card(
-        modifier = modifier.width(240.dp),
-        colors = CardDefaults.cardColors(
-            containerColor =
-                MaterialTheme.colorScheme.surface,
-        ),
+    MuseumCard(
+        modifier = modifier.width(260.dp),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement =
-                Arrangement.spacedBy(10.dp),
+                Arrangement.spacedBy(12.dp),
         ) {
             Image(
                 painter = painterResource(
@@ -331,32 +372,34 @@ private fun DinosaurHighlightCard(
                     "${dinosaur.name} dinosaur illustration",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(140.dp)
+                    .height(150.dp)
                     .clip(
                         RoundedCornerShape(14.dp),
                     ),
                 contentScale = ContentScale.Crop,
             )
 
-            Text(
-                text = dinosaur.name,
-                style =
-                    MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    text = dinosaur.name,
+                    style =
+                        MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
 
-            Text(
-                text = dinosaur.diet,
-                style =
-                    MaterialTheme.typography.labelLarge,
-                color =
-                    MaterialTheme.colorScheme.primary,
-            )
+                Text(
+                    text = dinosaur.diet.uppercase(),
+                    style =
+                        MaterialTheme.typography.labelLarge,
+                    color =
+                        MaterialTheme.colorScheme.primary,
+                )
+            }
 
             Text(
                 text = dinosaur.description,
                 style =
-                    MaterialTheme.typography.bodySmall,
+                    MaterialTheme.typography.bodyMedium,
                 color =
                     MaterialTheme.colorScheme
                         .onSurfaceVariant,
@@ -462,6 +505,7 @@ private fun ExhibitionScreenPreview() {
     DinoPathTheme {
         ExhibitionScreen(
             onStartKnowledgeCheck = {},
+            onBack = {},
         )
     }
 }

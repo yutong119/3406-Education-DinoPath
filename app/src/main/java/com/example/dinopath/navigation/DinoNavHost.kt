@@ -74,6 +74,9 @@ fun DinoNavHost(
                         launchSingleTop = true
                     }
                 },
+                onBack = {
+                    navController.popBackStack()
+                },
             )
         }
 
