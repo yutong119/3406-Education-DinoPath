@@ -59,12 +59,7 @@ fun ExhibitionScreen(
     }
 
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .semantics {
-                contentDescription = "Jurassic Period exhibition"
-
-            },
+        modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(
             start = 20.dp,
             top = 24.dp,

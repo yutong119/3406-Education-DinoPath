@@ -93,11 +93,7 @@ private fun HomeContent(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .semantics {
-                contentDescription = "DinoPath home screen"
-            },
+        modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(
             start = 20.dp,
             top = 24.dp,
