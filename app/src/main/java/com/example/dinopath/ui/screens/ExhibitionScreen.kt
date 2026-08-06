@@ -42,6 +42,12 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.dinopath.ui.theme.DinoPathTheme
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.example.dinopath.R
 
 @Composable
 fun ExhibitionScreen(
@@ -305,7 +311,6 @@ private fun DinosaurHighlightsSection(
     }
 }
 
-
 @Composable
 private fun DinosaurHighlightCard(
     dinosaur: DinosaurHighlight,
@@ -314,51 +319,57 @@ private fun DinosaurHighlightCard(
     Card(
         modifier = modifier.width(240.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor =
+                MaterialTheme.colorScheme.surface,
         ),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement =
+                Arrangement.spacedBy(10.dp),
         ) {
-            Box(
+            Image(
+                painter = painterResource(
+                    id = dinosaur.imageRes,
+                ),
+                contentDescription =
+                    "${dinosaur.name} dinosaur illustration",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RoundedCornerShape(14.dp),
+                    .height(140.dp)
+                    .clip(
+                        RoundedCornerShape(14.dp),
                     ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Pets,
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.primary,
-                )
-            }
+                contentScale = ContentScale.Crop,
+            )
 
             Text(
                 text = dinosaur.name,
-                style = MaterialTheme.typography.titleMedium,
+                style =
+                    MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
             )
 
             Text(
                 text = dinosaur.diet,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
+                style =
+                    MaterialTheme.typography.labelLarge,
+                color =
+                    MaterialTheme.colorScheme.primary,
             )
 
             Text(
                 text = dinosaur.description,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style =
+                    MaterialTheme.typography.bodySmall,
+                color =
+                    MaterialTheme.colorScheme
+                        .onSurfaceVariant,
             )
         }
     }
 }
+
 private data class GalleryContent(
     val title: String,
     val introduction: String,
@@ -416,23 +427,34 @@ private data class DinosaurHighlight(
     val name: String,
     val diet: String,
     val description: String,
+    @DrawableRes
+    val imageRes: Int,
 )
 
 private val dinosaurHighlights = listOf(
     DinosaurHighlight(
         name = "Stegosaurus",
         diet = "Herbivore",
-        description = "Known for its back plates and four-spiked tail.",
+        description =
+            "Known for its back plates and " +
+                    "four-spiked tail.",
+        imageRes = R.drawable.stegosaurus,
     ),
     DinosaurHighlight(
         name = "Brachiosaurus",
         diet = "Herbivore",
-        description = "A tall sauropod with longer front legs.",
+        description =
+            "A tall sauropod with longer " +
+                    "front legs.",
+        imageRes = R.drawable.brachiosaurus,
     ),
     DinosaurHighlight(
         name = "Allosaurus",
         diet = "Carnivore",
-        description = "A large predator of the Late Jurassic.",
+        description =
+            "A large predator of the " +
+                    "Late Jurassic.",
+        imageRes = R.drawable.allosaurus,
     ),
 )
 
