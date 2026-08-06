@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Card
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Animation
+import androidx.compose.material.icons.outlined.Contrast
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -16,11 +20,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.dinopath.ui.components.MuseumCard
+import com.example.dinopath.ui.components.MuseumIconContainer
+import com.example.dinopath.ui.components.MuseumPageTitle
+import com.example.dinopath.ui.components.MuseumSectionHeader
 import com.example.dinopath.ui.settings.SettingsViewModel
 
 @Composable
@@ -41,32 +49,18 @@ fun SettingsScreen(
             bottom = 40.dp,
         ),
         verticalArrangement =
-            Arrangement.spacedBy(16.dp),
+            Arrangement.spacedBy(20.dp),
     ) {
         item {
-            Text(
-                text = "Settings",
-                modifier = Modifier.semantics {
-                    heading()
-                },
-                style =
-                    MaterialTheme.typography
-                        .headlineLarge,
-                fontWeight = FontWeight.Bold,
-                color =
-                    MaterialTheme.colorScheme.primary,
+            MuseumPageTitle(
+                title = "Museum Settings",
+                subtitle = "Customise your prehistoric experience"
             )
         }
 
         item {
-            Text(
-                text = "APPEARANCE & ACCESSIBILITY",
-                style =
-                    MaterialTheme.typography
-                        .labelLarge,
-                fontWeight = FontWeight.Bold,
-                color =
-                    MaterialTheme.colorScheme.primary,
+            MuseumSectionHeader(
+                title = "Appearance & Accessibility",
             )
         }
 
@@ -75,6 +69,7 @@ fun SettingsScreen(
                 title = "Dark Mode",
                 description =
                     "Use the darker museum theme.",
+                icon = Icons.Outlined.DarkMode,
                 checked = preferences.darkMode,
                 onCheckedChange =
                     viewModel::setDarkMode,
@@ -86,6 +81,7 @@ fun SettingsScreen(
                 title = "Large Text",
                 description =
                     "Increase important text sizes.",
+                icon = Icons.Outlined.TextFields,
                 checked = preferences.largeText,
                 onCheckedChange =
                     viewModel::setLargeText,
@@ -98,6 +94,7 @@ fun SettingsScreen(
                 description =
                     "Increase contrast between " +
                             "content and backgrounds.",
+                icon = Icons.Outlined.Contrast,
                 checked =
                     preferences.highContrast,
                 onCheckedChange =
@@ -110,6 +107,7 @@ fun SettingsScreen(
                 title = "Reduce Motion",
                 description =
                     "Disable non-essential animations.",
+                icon = Icons.Outlined.Animation,
                 checked =
                     preferences.reduceMotion,
                 onCheckedChange =
@@ -123,11 +121,12 @@ fun SettingsScreen(
 private fun SettingSwitchCard(
     title: String,
     description: String,
+    icon: ImageVector,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    MuseumCard(
         modifier = modifier.fillMaxWidth(),
     ) {
         Row(
@@ -137,6 +136,8 @@ private fun SettingSwitchCard(
             verticalAlignment =
                 Alignment.CenterVertically,
         ) {
+            MuseumIconContainer(icon = icon)
+
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement =
@@ -148,7 +149,7 @@ private fun SettingSwitchCard(
                         MaterialTheme.typography
                             .titleMedium,
                     fontWeight =
-                        FontWeight.SemiBold,
+                        FontWeight.Bold,
                 )
 
                 Text(
