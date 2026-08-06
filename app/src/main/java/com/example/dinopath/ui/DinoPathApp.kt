@@ -2,11 +2,13 @@ package com.example.dinopath.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -35,39 +37,68 @@ fun DinoPathApp() {
         currentRoute in bottomRoutes
 
     /*
-     * Keep exactly one NavHost for the whole app.
+     * Do not create NavigationSuiteScaffold at all on Welcome,
+     * Knowledge Check, Result, and other non-top-level screens.
      *
-     * For Welcome and Knowledge Check, this scaffold remains present,
-     * but no navigation items are added, so the bottom navigation is hidden.
+     * This removes the empty navigation container that previously
+     * appeared at the bottom of the Welcome screen.
      */
-    NavigationSuiteScaffold(
-        modifier = Modifier.fillMaxSize(),
-        navigationSuiteItems = {
-            if (showNavigationSuite) {
+    if (showNavigationSuite) {
+        NavigationSuiteScaffold(
+            modifier = Modifier.fillMaxSize(),
+            navigationSuiteItems = {
                 bottomNavDestinations.forEach { destination ->
+                    val isSelected =
+                        currentRoute == destination.route
+
                     item(
                         icon = {
                             Icon(
-                                imageVector = destination.icon,
-                                contentDescription = destination.label,
+                                imageVector = if (isSelected) {
+                                    destination.selectedIcon
+                                } else {
+                                    destination.unselectedIcon
+                                },
+                                contentDescription =
+                                    destination.label,
                             )
                         },
                         label = {
-                            Text(destination.label)
-                        },
-                        selected =
-                            currentRoute == destination.route,
-                        onClick = {
-                            navController.navigateToTopLevelDestination(
-                                destination = destination,
-                                currentRoute = currentRoute,
+                            Text(
+                                text = destination.label,
+                                style =
+                                    MaterialTheme.typography
+                                        .labelMedium,
+                                fontWeight = if (isSelected) {
+                                    FontWeight.Bold
+                                } else {
+                                    FontWeight.Normal
+                                },
                             )
+                        },
+                        selected = isSelected,
+                        onClick = {
+                            navController
+                                .navigateToTopLevelDestination(
+                                    destination = destination,
+                                    currentRoute = currentRoute,
+                                )
                         },
                     )
                 }
-            }
-        },
-    ) {
+            },
+        ) {
+            DinoNavHost(
+                navController = navController,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
+    } else {
+        /*
+         * Welcome and secondary flow screens use the full window.
+         * No navigation bar, navigation rail, or empty navigation
+         * container is created.
+         */
         DinoNavHost(
             navController = navController,
             modifier = Modifier.fillMaxSize(),
