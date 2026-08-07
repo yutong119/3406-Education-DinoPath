@@ -712,24 +712,25 @@ DinoPath includes local dinosaur and museum illustrations under:
 app/src/main/res/drawable-nodpi/
 ```
 
-Before final submission, record the exact source, author, licence, and access date for each externally sourced asset:
+| Asset | Type | Source        |
+|---|------|---------------|
+| `welcome_dino_bg.webp` | **Museum background image** | **Generated using generative AI** |
+| `stegosaurus.webp` | **Dinosaur illustration** | **Generated using generative AI** |
+| `brachiosaurus.webp` | **Dinosaur illustration** | **Generated using generative AI** |
+| `allosaurus.webp` | **Dinosaur illustration** | **Generated using generative AI** |
+| `parasaurolophus.webp` | **Dinosaur illustration** | **Generated using generative AI** | 
+| `triceratops.webp` | **Dinosaur illustration** | **Generated using generative AI** |
+| `velociraptor.webp` | **Dinosaur illustration** | **Generated using generative AI** |
 
-| Asset | Source / author | Licence | Access date |
-|---|---|---|---|
-| `welcome_dino_bg.webp` | **Add exact source** | **Add licence** | **Add date** |
-| `stegosaurus.webp` | **Add exact source** | **Add licence** | **Add date** |
-| `brachiosaurus.webp` | **Add exact source** | **Add licence** | **Add date** |
-| `allosaurus.webp` | **Add exact source** | **Add licence** | **Add date** |
-| `parasaurolophus.webp` | **Add exact source** | **Add licence** | **Add date** |
-| `triceratops.webp` | **Add exact source** | **Add licence** | **Add date** |
-| `velociraptor.webp` | **Add exact source** | **Add licence** | **Add date** |
+These AI-generated images were used as visual assets within the DinoPath museum interface. They were incorporated into the application through cropping, overlays, layout composition, and responsive presentation in Jetpack Compose.
 
-Do not claim that an asset is copyright-free unless the original licence explicitly supports that statement.
+The use of generative AI for these visual assets is also disclosed in the project’s AI-Generated Material Declaration.
 
 ### 9.2 External information service
 
 - Wikipedia REST page-summary service supplies optional live specimen information.
-- Live data is cached locally for resilience.
+- Live data is cached locally for resilience. 
+- Local fallback content is displayed when live content is unavailable.
 - DinoPath is not affiliated with or endorsed by Wikipedia or the Wikimedia Foundation.
 
 ### 9.3 Development resources
@@ -761,33 +762,7 @@ Do not claim that an asset is copyright-free unless the original licence explici
 
 ---
 
-## 11. Additional Documentation
-
-The repository can include the following supporting documents:
-
-- architecture diagram;
-- development roadmap;
-- task and commit plan;
-- testing evidence;
-- AI-generated material declaration;
-- image and content asset register;
-- final demonstration screenshots;
-- final demonstration video or GIFs.
-
-Recommended documentation structure:
-
-```text
-docs/
-├── architecture/
-├── ai-declaration/
-├── assets/
-├── testing/
-└── screenshots/
-```
-
----
-
-## 12. Project Philosophy
+## 11. Project Philosophy
 
 > “Learning becomes a journey when every discovery leads to the next question.”
 
