@@ -35,83 +35,65 @@ DinoPath is a museum-themed Android educational application that guides learners
 The following GIF demonstrations present the main DinoPath user flows, including the knowledge check, learning records, museum collection, and accessibility settings.
 
 <table>
-  <tr>
-    <td align="center" width="50%" style="padding: 18px;">
-      <img
-        src="./assets/quiz_and_review.gif"
-        alt="Knowledge Check quiz and answer review"
-        width="220"
-      />
-      <br><br>
-      <strong>Knowledge Check & Review</strong>
-      <br><br>
-      Complete the Jurassic knowledge check, receive immediate feedback, view the final result, and review submitted answers.
-    </td>
+<tr>
 
-    <td align="center" width="50%" style="padding: 18px;">
-      <img
-        src="./assets/journal_mistakes_record.gif"
-        alt="Explorer Journal and mistake review"
-        width="220"
-      />
-      <br><br>
-      <strong>Explorer Journal & Mistake Review</strong>
-      <br><br>
-      Track completed chapters, accuracy, stars, mistakes, evolution progress, recent activity, and review incorrect answers.
-    </td>
-  </tr>
+<td align="center" width="50%">
+<img src="./assets/quiz_and_review.gif" alt="Knowledge Check and Review" width="220">
+<br><br>
+<strong>Knowledge Check & Review</strong>
+<br><br>
+Complete the Jurassic knowledge check, receive immediate feedback, view the final result, and review submitted answers.
+</td>
 
-  <tr>
-    <td align="center" width="50%" style="padding: 18px;">
-      <img
-        src="./assets/heart_collection.gif"
-        alt="Dinosaur museum collection"
-        width="220"
-      />
-      <br><br>
-      <strong>Museum Collection</strong>
-      <br><br>
-      Add dinosaur specimens to the personal museum collection, view saved specimens, and remove favourites.
-    </td>
+<td align="center" width="50%">
+<img src="./assets/journal_mistakes_record.gif" alt="Explorer Journal and Mistake Review" width="220">
+<br><br>
+<strong>Explorer Journal & Mistake Review</strong>
+<br><br>
+Track completed chapters, accuracy, stars, mistakes, evolution progress, recent activity, and review incorrect answers.
+</td>
 
-    <td align="center" width="50%" style="padding: 18px;">
-      <img
-        src="./assets/dark_mode.gif"
-        alt="DinoPath dark mode"
-        width="220"
-      />
-      <br><br>
-      <strong>Dark Mode</strong>
-      <br><br>
-      Switch between the light museum theme and the darker prehistoric museum experience.
-    </td>
-  </tr>
+</tr>
 
-  <tr>
-    <td align="center" width="50%" style="padding: 18px;">
-      <img
-        src="./assets/large_text.gif"
-        alt="DinoPath large text accessibility setting"
-        width="220"
-      />
-      <br><br>
-      <strong>Large Text</strong>
-      <br><br>
-      Increase important text sizes while retaining scrollability and readable layouts.
-    </td>
+<tr>
 
-    <td align="center" width="50%" style="padding: 18px;">
-      <img
-        src="./assets/high_contrast.gif"
-        alt="DinoPath high contrast accessibility setting"
-        width="220"
-      />
-      <br><br>
-      <strong>High Contrast</strong>
-      <br><br>
-      Increase foreground and background contrast to improve content visibility.
-    </td>
-  </tr>
+<td align="center" width="50%">
+<img src="./assets/heart_collection.gif" alt="Museum Collection" width="220">
+<br><br>
+<strong>Museum Collection</strong>
+<br><br>
+Add dinosaur specimens to the personal museum collection, view saved specimens, and remove favourites.
+</td>
+
+<td align="center" width="50%">
+<img src="./assets/dark_mode.gif" alt="Dark Mode" width="220">
+<br><br>
+<strong>Dark Mode</strong>
+<br><br>
+Switch between the light museum theme and the darker prehistoric museum experience.
+</td>
+
+</tr>
+
+<tr>
+
+<td align="center" width="50%">
+<img src="./assets/large_text.gif" alt="Large Text" width="220">
+<br><br>
+<strong>Large Text</strong>
+<br><br>
+Increase important text sizes while retaining scrollability and readable layouts.
+</td>
+
+<td align="center" width="50%">
+<img src="./assets/high_contrast.gif" alt="High Contrast" width="220">
+<br><br>
+<strong>High Contrast</strong>
+<br><br>
+Increase foreground and background contrast to improve content visibility.
+</td>
+
+</tr>
 </table>
 
 ### Demo Features
